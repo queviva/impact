@@ -19,6 +19,7 @@
 }
 
 div {
+    position: relative;
     padding: 10px;
 }
 
@@ -39,6 +40,13 @@ a, a:visited {
 a:hover {
     color: #e86;
     transition: 300ms linear color;
+}
+
+.transMig {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
 }
 
 </style>
@@ -103,8 +111,8 @@ a:hover {
         impact crater, located near the town of Chixu...
         <br><br>
         Oooh - <i>sorry</i>.  I can't believe this happend again.
-        I'm so sorry; this isn't the right image.  Let me find
-        the right one.
+        I'm so sorry; this isn't the right image either.
+        Let me find the right one.
         <br><br>
         Ok, here it is - this time it's correct.
         Who can argue with this? Nothing could be a more obvious
@@ -143,7 +151,7 @@ a:hover {
         the site of an impact crater just off the coast of the
         small town of Chix ...
         <br><br>
-        ARE YOU <b>KIDDING</b> ME?!!!
+        ARE YOU <i><b>KIDDING</b></i> ME?!!!
         <br><br>
         Wow - so, <i>none</i> of these is from anywhere near
         that place?  You're telling me all these images are
@@ -162,8 +170,25 @@ a:hover {
         that could be interpreted as impact crater features.
         I mean to say is - how many of these did <i>you</i> see?
     </div>
-    <div class="migDiv">
-        <img src="circleAmerica.jpg" class="fullus">
+    <div>
+        <div class="migDiv" style="height:400px;">
+        <img src="rawAmerica.jpg" class="transMig">
+        <img id="trans" src="circleTransAmerica.png" class="transMig">
+        </div>
+        <input
+         type="range"
+         min="0"
+         max="1"
+         step="0.01"
+         value="0.5"
+         style="
+            width: 100%;
+            bottom: 0px;
+         "
+         oninput="
+            document.getElementById('trans').style.opacity= this.value;
+         "
+        />
     </div>
     <div>
         Now that you've had the circles pointed out, go back and
@@ -173,10 +198,12 @@ a:hover {
     <div>
         So, do you think you could find one of these in really
         any size you'd like? Or need? Or that would fit with
-        your predictions?  What if you wanted to find one that
+        your pre-conceived notions - I mean, <i>predictions</i>?
+        
+        What if you wanted to find one that
         <a href="https://www.scientificamerican.com/article/doubts-on-dinosaurs/">to date,
         no one has found iridium associated with</a>? What about
-        one that has been?
+        one that someone has?
     </div>
     <div>
         When paleontologists see a million acres of grassland,
