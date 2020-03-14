@@ -3,6 +3,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 
+* {
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    hyphens: auto;
+}
+
 #holder {
     padding: 10px;
     font-size: 24px;
@@ -25,11 +36,12 @@ div {
 }
 
 img {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
 }
 
 img.fullus {
-    width: 100%;
+    max-width: 100%;
 }
 
 a, a:visited {
@@ -47,7 +59,7 @@ a:hover {
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 100%;
+    max-width: 100%;
 }
 
 </style>
@@ -172,10 +184,28 @@ a:hover {
         I mean to say is - how many of these did <i>you</i> see?
     </div>
     <div>
-        <div class="migDiv" style="height:400px;">
+        <div id="transMapHolder" class="migDiv">
         <img src="rawAmerica.jpg" class="transMig">
-        <img id="trans" src="circleTransAmerica.png" class="transMig">
+        <img id="trans0" src="circleTransAmerica00.png" class="transMig">
+        <img id="trans1" src="circleTransAmerica01.png" class="transMig"
+        style="opacity:0.0;">
         </div>
+    </div>
+    <script>
+        const tmh = document.getElementById('transMapHolder');
+        const trans0 = document.getElementById('trans0');
+        const trans1 = document.getElementById('trans1');
+        
+        const setSize = function (e) {
+           tmh.style.height = window.getComputedStyle(trans0).height;
+        };
+        
+        'resize|load'.split('|').forEach(evt =>
+            window.addEventListener(evt, setSize)
+        );
+        
+    </script>
+    <div>
         <input
          type="range"
          min="0"
@@ -187,11 +217,12 @@ a:hover {
             bottom: 0px;
          "
          oninput="
-            document.getElementById('trans').style.opacity= this.value;
+            document.getElementById('trans0').style.opacity =
+                this.value > 0.5 ? 1.0 : this.value * 2;
+            document.getElementById('trans1').style.opacity =
+                this.value < 0.5 ? 0 : 2 * (this.value - 0.5);
          "
         />
-        <br>
-        slide this around
     </div>
     <div>
         Now that you've had the circles pointed out, go back and
@@ -199,9 +230,10 @@ a:hover {
         of those circles - or more.
     </div>
     <div>
-        So, do you think you could find one of these in really
+        So, do you think you could find one of these in, really,
         any size you'd like? Or need? Or that would fit with
-        your pre-conceived notions - I mean, <i>predictions</i>?
+        your pre-conceived notions - I meant to say,
+        <i>predictions</i>?
         
         What if you wanted to find one that
         <a href="https://www.scientificamerican.com/article/doubts-on-dinosaurs/">to date,
@@ -209,12 +241,32 @@ a:hover {
         one that someone has?
     </div>
     <div>
-        When paleontologists see a million acres of grassland,
-        destroyed by wildfire, they look for a <i>million-acre-wide
-        asteroid</i>, instead of the cigarette that caused it.
+        Proof that any one of these arbitrary locations
+        was an impact crater, comes from finding
+        tektites <i><a href="https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2001JE001532">
+        within only one hundred thousand kilometers</a></i>
+        of the impact zone. Is that far enough?
         <br><br>
+        That's <i>proof</i>, remember - absolute proof! Tektites,
+        as I now call them, within only <i>half the distance
+        to the moon</i>.
+    </div>
+    <div><hr></div>
+    <div>
+        You aren't the first person who set out to find the
+        thing you were looking for. And I'm sure you think you
+        found it.  But, not "p less than point zero five" you
+        didn't. The chances of the null hypothesis randomly
+        occuring are ONE HUNDRED PERCENT.
+    </div>
+    <div>
+        Paleontologists see a million acres of grassland,
+        destroyed by wildfire, and look for a <i>million-acre-wide
+        asteroid</i>, instead of the cigarette butt that caused it.
+    </div>
+    <div style="text-align:right;width:100%">
+            ~queviva
     </div>
 </div>
-<br><br>
 </body>
 </html>
