@@ -6,6 +6,8 @@
 * {
     box-sizing: border-box;
     word-wrap: break-word;
+    --color: hsl(48, 100%, 88%);
+    --backcolor: hsl(120, 100%, 13%);
 }
 
 body {
@@ -21,8 +23,8 @@ body {
     max-width: 700px;
     margin: auto;
     border: 1px solid #000;
-    background-color: #040;
-    color: #fea;
+    background-color: var(--backcolor);
+    color: var(--color);
 }
 
 .migDiv {
@@ -45,7 +47,7 @@ img.fullus {
 }
 
 a, a:visited {
-    color: #fea;
+    color: var(--color);
     text-decoration: none;
     transition: 300ms linear color;
 }
@@ -61,6 +63,41 @@ a:hover {
     left: 0px;
     max-width: 100%;
 }
+
+input {
+    --thumbH : 30px;
+    --color: 48, 100%;
+    --lightness: 88%;
+    --midness:  var(--lightness);/*calc(0.37 * var(--lightness));*/
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    margin: 0;
+    height: var(--thumbH);
+    width: 80%;
+    border-radius: calc(var(--thumbH) / 2);
+    background-color: hsla(0,100%,100%,0.3);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: hsl(var(--color), var(--lightness));
+    opacity: 1.7;
+    height: var(--thumbH);
+    margin-bottom: 0px;
+    width: var(--thumbH);
+    border: calc(0.1 * var(--thumbH)) solid;
+    border-color: var(--backcolor);
+    border-radius: calc(var(--thumbH) / 2);
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
 
 </style>
 </head>
@@ -189,12 +226,15 @@ a:hover {
         <img id="trans0" src="circleTransAmerica00.png" class="transMig">
         <img id="trans1" src="circleTransAmerica01.png" class="transMig"
         style="opacity:0.0;">
+        <img id="trans2" src="circleTransAmerica02.png" class="transMig"
+        style="opacity:0.0;">
         </div>
     </div>
     <script>
         const tmh = document.getElementById('transMapHolder');
         const trans0 = document.getElementById('trans0');
         const trans1 = document.getElementById('trans1');
+        const trans2 = document.getElementById('trans2');
         
         const setSize = function (e) {
            tmh.style.height = window.getComputedStyle(trans0).height;
@@ -221,13 +261,19 @@ a:hover {
                 this.value > 0.5 ? 1.0 : this.value * 2;
             document.getElementById('trans1').style.opacity =
                 this.value < 0.5 ? 0 : 2 * (this.value - 0.5);
+            document.getElementById('trans2').style.opacity =
+                this.value < 0.75 ? 0 : 4 * (this.value - 0.75);
          "
         />
     </div>
     <div>
         Now that you've had the circles pointed out, go back and
         look at the raw map again; tell me if you don't see all
-        of those circles - or more.
+        of those circles - or more. Try zooming in on
+        <a href="https://mrdata.usgs.gov/general/map-us.html">
+        higher resolution maps</a>, or other parts of the werld.
+        
+        
     </div>
     <div>
         So, do you think you could find one of these in, really,
@@ -251,13 +297,12 @@ a:hover {
         as I now call them, within only <i>half the distance
         to the moon</i>.
     </div>
-    <div><hr></div>
+    <div><hr style="height:1px;background-color:#fea;border:none;"></div>
     <div>
         You aren't the first person who set out to find the
         thing you were looking for. And I'm sure you think you
         found it.  But, not "p less than point zero five" you
-        didn't. The chances of the null hypothesis randomly
-        occuring are ONE HUNDRED PERCENT.
+        didn't.
     </div>
     <div>
         Paleontologists see a million acres of grassland,
@@ -265,7 +310,7 @@ a:hover {
         asteroid</i>, instead of the cigarette butt that caused it.
     </div>
     <div style="text-align:right;width:100%">
-            ~queviva
+        <i>~queviva</i>
     </div>
 </div>
 </body>
