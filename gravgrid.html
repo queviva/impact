@@ -1,0 +1,471 @@
+<!doctype html><html>
+    
+<head><title>gravgrid</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+
+* {
+    box-sizing: border-box;
+    word-wrap: break-word;
+    --hue: 48;
+    --sat: 100%;
+    --lit: 88%;
+    --color: hsl(var(--hue),var(--sat),var(--lit));
+    --backcolor: hsl(120, 100%, 13%);
+    --litback: hsla(120,50%,25%);
+    --dotcolor: var(--color);
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    hyphens: auto;
+}
+
+#holder {
+    padding: 10px;
+    font-size: 24px;
+    text-align: justify;
+    max-width: 700px;
+    margin: auto;
+    border: 1px solid #000;
+    background-color: var(--backcolor);
+    color: var(--color);
+    z-index: 2;
+}
+
+div {
+    position: relative;
+    padding: 10px;
+}
+
+img {
+    width: 100%;
+    max-width: 400px;
+}
+
+a, a:visited {
+    color: var(--color);
+    text-decoration: none;
+    transition: 300ms linear color;
+}
+
+a:hover {
+    color: #e86;
+    transition: 300ms linear color;
+}
+
+input {
+    --thumbH : 30px;
+    --color: 48, 100%;
+    --lightness: 88%;
+    --midness:  var(--lightness);/*calc(0.37 * var(--lightness));*/
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    margin: 0;
+    height: var(--thumbH);
+    width: 100%;
+    border-radius: calc(var(--thumbH) / 2);
+    background-color: hsla(0,100%,100%,0.3);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: hsl(var(--color), var(--lightness));
+    opacity: 1.7;
+    height: var(--thumbH);
+    margin-bottom: 0px;
+    width: var(--thumbH);
+    border: calc(0.1 * var(--thumbH)) solid;
+    border-color: var(--backcolor);
+    border-radius: calc(var(--thumbH) / 2);
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+</style>
+<style>
+
+svg {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#svgHolder {
+    border: 10px solid var(--litback);
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    xxxheight: 200px;
+    padding-top: calc(40% - 7px);
+    overflow: hidden;
+}
+
+#svgGrid {
+    padding: 0; margin: 0;
+    position: absolute;
+    top:0;
+    overflow: visible;
+    xxtransform: perspective(400px) rotateX(45deg);
+    z-index:-1;
+}
+
+#svgPlanet {
+    padding: 0; margin: 0;
+    top:0;
+    position: absolute;
+    xxxoverflow hidden;
+}
+
+.gridline {
+    stroke-width: 4;
+    stroke: var(--dotcolor);
+    stroke-linecap: round;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+}
+
+.xlineDots {
+    marker-start: url(#dot);
+    marker-mid: url(#dot);
+    marker-end: url(#dot);
+}
+
+.xline {
+    
+}
+
+.yline {
+    xstroke: red;
+}
+
+.axisline{
+    stroke-width: 3;
+    stroke: red;
+    vector-effect: non-scaling-stroke;
+}
+
+#planet {
+    xxopacity: 1.5;
+    fill: none;
+    stroke: hsla(
+        var(--hue),calc(0.8 * var(--sat)),calc(0.4 * var(--lit)),0.8
+    );
+    stroke-width: 8;
+    vector-effect: non-scaling-stroke;
+    xxxtransition: r 0.3s cubic-bezier(0.3, 1.2, 0.6, 1.6);
+}
+
+#planetLines{
+    stroke: #ea0;
+    stroke-width: 0.3;
+}
+
+</style>
+</head>
+
+<body>
+<div id="holder">
+    
+    <div id="notes"> grav grid </div>
+    
+    <div id="svgHolder">
+        
+        <svg id="svgGrid"
+         xmlns:xlink="http://www.w3.org/2000/svg"
+         width="100%"
+         viewbox="-50 -20 100 40"
+         preserveAspectRatio="none"
+        >
+            <defs>
+                <marker id="dot" refX="10" refY="10"
+                 vector-effect="non-scaling-size"
+                 markerUnits="userSpaceOnUse"
+                 markerWidth="20"
+                 markerHeight="20"
+                 orient="auto"
+                >
+                    <circle cx="10" cy="10" r="0.8"
+                     vector-effect="non-scaling-size"
+                     fill="var(--dotcolor)"
+                     stroke="none"
+                    ></circle>
+                </marker>
+                <g id="gridgroup"><g id="ylines"></g><g id="xlines"></g><path id="planetLines"></path></g>
+                <g id="totalgrid">
+                    <use href="#gridgroup"></use>
+                    <use href="#gridgroup" transform="scale(-1,1)"></use>
+                </g>
+            </defs>
+            
+            <!--path id="xaxis" class="axisline" d="M0 -50v100"></path-->
+            <!--path id="yaxis" class="axisline" d="M-50 0h100"></path-->
+            <use href="#totalgrid"></use>
+            <use href="#totalgrid" transform="rotate(180)"></use>
+        </svg>
+        
+        <svg id="svgPlanet"
+         xmlns:xlink="http://www.w3.org/2000/svg"
+         width="100%"
+         viewbox="-50 -20 100 40"
+        >
+            <circle id="planet" cx="0" cy="0" r="0"></circle>
+            
+        </svg>
+        
+    </div>
+    
+    <div id="slideDiv">
+        <input
+         id="slide0"
+         type="range"
+         min="0"
+         max="100"
+         value="0"
+        />
+    </div>
+    
+    <div style="text-align:right;width:100%"><i>~queviva</i></div>
+    
+</div>
+</body>
+
+<script id="gravscript">
+    
+document.addEventListener('DOMContentLoaded', () => {
+
+    // prefs {
+    let count = 0;
+    
+    const bigG = 1;
+
+    const size = 5;
+    const lineWidth = 4;
+    const useDots = false;
+    const xdim = 140;
+    const ydim = 80;
+    const pz = 13;
+    const pRad = 12;
+    const valScale = 5.2;
+    //}
+    
+    // refs {
+    
+    const svgHolder = document.getElementById('svgHolder');
+    const gridgroup = document.getElementById('gridgroup');
+    const xlines = document.getElementById('xlines');
+    const ylines = document.getElementById('ylines');
+    const planet = document.getElementById('planet');
+    const notes = document.getElementById('notes');
+
+    const allPoints = [];
+
+    //}
+    
+    // methods and objects {
+    
+    function Point (x, y) {
+        
+        this.ox = x;
+        this.oy = y;
+        this.x = x;
+        this.y = y;
+        this.theta = Math.atan2(y, x);
+        this.cos = Math.cos(this.theta);
+        this.sin = Math.sin(this.theta);
+        
+        let dist = Math.sqrt(this.x*this.x + this.y*this.y);
+        this.acc = dist === 0 ? 0 : bigG * (1/(dist*dist));
+        
+    }
+    
+    Point.prototype.recalc = function (dT = 0) {
+        
+        let D = (1/2) * this.acc * dT*dT;
+        //let sign = Math.sign(dT);
+        //D *= sign;
+        
+        this.x = this.ox - D * this.cos;
+        this.y = this.oy - D * this.sin;
+        
+    };
+    
+    Point.prototype.makeSVG = function () {
+        return this.x +' '+ this.y +' ';
+    }
+    
+    function createLines (xy) {
+        
+        for(let i = 0, j = [ydim,xdim][xy]/size; i <= j; i++) {
+        
+            let tmpL = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+            );
+        
+            tmpL.classList.add('gridline');
+            tmpL.classList.add(['xline','yline'][xy]);
+            tmpL.style.strokeWidth = lineWidth;
+            
+            //if(xy===0){
+            //tmpL.style.stroke = 'hsl(' + Math.random() * 360 + ',100%,50%)';
+            //}
+            
+            if(useDots && xy === 0){
+                tmpL.classList.add('xlineDots');
+            }
+        
+            [xlines,ylines][xy].appendChild(tmpL);
+        }
+        
+    }
+    
+    function drawX (pRad) {
+        
+        let negD = '';
+        
+        for (let i = 0, z = xlines.childNodes, j = z.length; i < j; i++) {
+        
+            let tmpD = '';
+            
+            
+            let pozz = allPoints[i].filter(P => {
+                
+                return P.x < 55 && P.y < 30 && P.y >= 0;
+                
+            });
+            
+            let negz = allPoints[i].filter(P => P.y < 0);
+            
+            if (negz.length > 0) {
+                tmpD += 'M0 0 ';
+            }
+            
+            pozz.forEach(P => {
+                tmpD += (tmpD === '' ? 'M' : 'L') + P.makeSVG();
+            });
+            
+            if (negz.length !== 0 && pRad >= 0) {
+                negz.forEach(P => {
+                    negD += 'M0 0L' +
+                    Math.abs(pRad * P.cos) +' '+
+                    Math.abs(pRad * P.sin) +' ';
+                });
+            }
+            
+            z[i].setAttribute('d', tmpD);
+        
+        }
+        
+        planetLines.setAttribute('d', negD);
+        
+        
+    }
+    
+    function drawY () {
+        
+        for (let i = 0, z = ylines.childNodes, j = z.length; i < j; i++) {
+            
+            let tmpD = '';
+            
+            for (let k = 0, m = allPoints.length; k < m; k++) {
+            
+                if(allPoints[k][i].y > 30 || allPoints[k][i].x > 60) {break;}
+                
+                tmpD += (k === 0 ? 'M' : 'L') +
+                    (allPoints[k][i].x <= 0 ? 0 : allPoints[k][i].x) +
+                    ' ' +
+                    (allPoints[k][i].y <= 0 ? 0 : allPoints[k][i].y);
+                    
+            }
+            
+            z[i].setAttribute('d', tmpD);
+        
+        }
+    
+        
+    }
+    
+    function update (val = 0) {
+    
+        // scale the mass
+        planet.setAttribute('r', val < pz ? 0 : pRad*(val - pz) / (100 - pz));
+    
+        // recalc all the points
+        for (let AP of allPoints) {
+    
+            for (let p of AP) {
+                p.recalc(val * valScale);
+            }
+    
+        }
+    
+        // draw the x-lines
+        drawX(pRad*(val - pz) / (100 - pz));
+    
+        // draw the y-lines
+        drawY();
+    
+    }
+    
+    //}
+    
+    // fill the points array {
+    for (let yind = 0, j = ydim/size; yind <= j; yind++) {
+        
+        allPoints[yind] = [];
+        
+        for (let xind = 0, k = xdim/size; xind <= k; xind++) {
+            
+            allPoints[yind][xind] = new Point(xind * size, yind * size);
+            
+        }
+        
+    }
+    //}
+    
+    // create the lines {
+    createLines(0);
+    createLines(1);
+    //}
+    
+    // draw the lines {
+    update();
+    //}
+
+    // handlers {
+    
+    for (let [x,y,z] of [
+        
+       [svgHolder, 'wheel', e => {
+           
+           e.preventDefault();
+           count=[0,(count+e.deltaX/20),100].sort((a,b)=>a-b)[1];
+           slide0.value = count;
+           
+       }],
+       
+       [slide0, 'input', e => {
+            count = parseInt(slide0.value);
+       }],
+    
+    ]){
+        x.addEventListener(y, e => {
+            z(e);
+            update(count);
+        });
+    }
+    //}
+    
+});
+
+</script>
+
+</html>
