@@ -175,8 +175,6 @@ svg {
 <body>
 <div id="holder">
     
-    <div id="notes"> grav grid </div>
-    
     <div id="svgHolder">
         
         <svg id="svgGrid"
@@ -278,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const xlines = document.getElementById('xlines');
     const ylines = document.getElementById('ylines');
     const planet = document.getElementById('planet');
-    const notes = document.getElementById('notes');
 
     const allPoints = [];
 
@@ -350,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function drawX (pRad) {
        
         // initialize negative path
-        let negD = '';
+        //let negD = '';
         
         // loop through all the x-grid lines and x-axis
         for (let i = 0, z = [xaxis,...xlines.childNodes], j = z.length; i < j; i++) {
