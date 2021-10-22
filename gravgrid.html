@@ -66,6 +66,7 @@ input[type=range] {
     -webkit-appearance: none;
     -moz-appearance: none;
     display: inline-block;
+    padding: 0;
     margin: 0;
     height: var(--thumbH);
     width: 100%;
@@ -98,7 +99,7 @@ svg {
 }
 
 #svgHolder {
-    border: 10px solid var(--litback);
+    border: 10px solid hsla(0,100%,100%,0.3);
     position: relative;
     padding: 0;
     margin: 0;
@@ -113,7 +114,7 @@ svg {
     position: absolute;
     top:0;
     overflow: visible;
-    xxtransform: perspective(400px) rotateX(45deg);
+    xxxtransform: perspective(400px) rotateX(45deg);
     z-index:-1;
 }
 
@@ -147,14 +148,14 @@ svg {
 }
 
 .axisline{
-    stroke-width: 3;
-    stroke: red;
+    xxxstroke-width: 1;
+    stroke: orange;
     vector-effect: non-scaling-stroke;
 }
 
 #planet {
     xxopacity: 1.5;
-    fill: none;
+    fill: #ea0;
     stroke: hsla(
         var(--hue),calc(0.8 * var(--sat)),calc(0.4 * var(--lit)),0.8
     );
@@ -198,17 +199,30 @@ svg {
                      stroke="none"
                     ></circle>
                 </marker>
-                <g id="gridgroup"><g id="ylines"></g><g id="xlines"></g><path id="planetLines"></path></g>
+                
+                <g id="gridgroup">
+                    <g id="ylines"></g>
+                    <g id="xlines"></g>
+                    <path id="planetLines"></path>
+                </g>
+                
+                <g id="axisgroup">
+                    <path id="xaxis" class="axisline"></path>
+                    <path id="yaxis" class="axisline"></path>
+                </g>
+                
                 <g id="totalgrid">
                     <use href="#gridgroup"></use>
                     <use href="#gridgroup" transform="scale(-1,1)"></use>
                 </g>
+                
             </defs>
             
-            <!--path id="xaxis" class="axisline" d="M0 -50v100"></path-->
-            <!--path id="yaxis" class="axisline" d="M-50 0h100"></path-->
             <use href="#totalgrid"></use>
             <use href="#totalgrid" transform="rotate(180)"></use>
+            <use href="#axisgroup"></use>
+            <use href="#axisgroup" transform="rotate(180)"></use>
+            
         </svg>
         
         <svg id="svgPlanet"
@@ -222,7 +236,7 @@ svg {
         
     </div>
     
-    <div id="slideDiv">
+    <div id="slideDiv" style="padding:10px 0px;margin:0;">
         <input
          id="slide0"
          type="range"
@@ -259,7 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // refs {
     
     const svgHolder = document.getElementById('svgHolder');
-    const gridgroup = document.getElementById('gridgroup');
+    const xaxis = document.getElementById('xaxis');
+    const yaxis = document.getElementById('yaxis');
     const xlines = document.getElementById('xlines');
     const ylines = document.getElementById('ylines');
     const planet = document.getElementById('planet');
@@ -278,8 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
         this.x = x;
         this.y = y;
         this.theta = Math.atan2(y, x);
-        this.cos = Math.cos(this.theta);
-        this.sin = Math.sin(this.theta);
+        this.cos = Math.cos(this.theta).toFixed(3);
+        this.sin = Math.sin(this.theta).toFixed(3);
         
         let dist = Math.sqrt(this.x*this.x + this.y*this.y);
         this.acc = dist === 0 ? 0 : bigG * (1/(dist*dist));
@@ -289,8 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     Point.prototype.recalc = function (dT = 0) {
         
         let D = (1/2) * this.acc * dT*dT;
-        //let sign = Math.sign(dT);
-        //D *= sign;
         
         this.x = this.ox - D * this.cos;
         this.y = this.oy - D * this.sin;
@@ -321,37 +334,72 @@ document.addEventListener('DOMContentLoaded', () => {
             if(useDots && xy === 0){
                 tmpL.classList.add('xlineDots');
             }
-        
-            [xlines,ylines][xy].appendChild(tmpL);
+            
+            if (i === 0) {
+                let tmpX = [xaxis, yaxis][xy];
+                tmpL.classList.forEach(C => {
+                    tmpX.classList.add(C);
+                })
+            } else {
+                [xlines, ylines][xy].appendChild(tmpL);
+            }
         }
         
     }
     
     function drawX (pRad) {
-        
+       
+        // initialize negative path
         let negD = '';
         
-        for (let i = 0, z = xlines.childNodes, j = z.length; i < j; i++) {
-        
-            let tmpD = '';
+        // loop through all the x-grid lines and x-axis
+        for (let i = 0, z = [xaxis,...xlines.childNodes], j = z.length; i < j; i++) {
             
+            // initialize positive path
+            let posD = '';
             
+            // grab all positive points in the scope
             let pozz = allPoints[i].filter(P => {
                 
-                return P.x < 55 && P.y < 30 && P.y >= 0;
+                return P.x >=0 && P.y >= 0 && P.x < 58 && P.y < 30;
                 
             });
             
-            let negz = allPoints[i].filter(P => P.y < 0);
+            // grab all the negative points
+            let negz = allPoints[i].filter(P => P.x < 0 || P.y <0);
             
-            if (negz.length > 0) {
-                tmpD += 'M0 0 ';
+            // if there are any positive points ...
+            if (pozz.length !== 0) {
+                
+                // first check if there are negative points ...
+                if (negz.length !== 0) {
+            
+                    // then start line at zero-zero
+                    posD += 'M0 0 ';
+            
+                }
+                else { // otherwize ...
+            
+                    // start line at first positive point
+                    posD += 'M' + pozz[0].makeSVG();
+            
+                    // then remove it from the pos list
+                    pozz.shift();
+            
+                }
+                
+                // loop through positive points
+                pozz.forEach((P, i) => {
+            
+                    // make a line out of them
+                    posD += 'L' + P.makeSVG();
+            
+                });
+                
             }
             
-            pozz.forEach(P => {
-                tmpD += (tmpD === '' ? 'M' : 'L') + P.makeSVG();
-            });
             
+            /*
             if (negz.length !== 0 && pRad >= 0) {
                 negz.forEach(P => {
                     negD += 'M0 0L' +
@@ -359,19 +407,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     Math.abs(pRad * P.sin) +' ';
                 });
             }
+            */
             
-            z[i].setAttribute('d', tmpD);
+            z[i].setAttribute('d', posD);
         
         }
         
-        planetLines.setAttribute('d', negD);
+        //planetLines.setAttribute('d', negD);
         
         
     }
     
     function drawY () {
         
-        for (let i = 0, z = ylines.childNodes, j = z.length; i < j; i++) {
+        for (let i = 0, z = [yaxis,...ylines.childNodes], j = z.length; i < j; i++) {
             
             let tmpD = '';
             
