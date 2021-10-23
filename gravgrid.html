@@ -104,7 +104,6 @@ svg {
     padding: 0;
     margin: 0;
     width: 100%;
-    xxxheight: 200px;
     padding-top: calc(40% - 7px);
     overflow: hidden;
 }
@@ -118,7 +117,7 @@ svg {
     z-index:-1;
 }
 
-#svgPlanet {
+#svgMass {
     padding: 0; margin: 0;
     top:0;
     position: absolute;
@@ -153,7 +152,7 @@ svg {
     vector-effect: non-scaling-stroke;
 }
 
-#planet {
+.mass {
     xxopacity: 1.5;
     fill: #ea0;
     stroke: hsla(
@@ -164,16 +163,13 @@ svg {
     xxxtransition: r 0.3s cubic-bezier(0.3, 1.2, 0.6, 1.6);
 }
 
-#planetLines{
-    stroke: #ea0;
-    stroke-width: 0.3;
-}
-
 </style>
 </head>
 
 <body>
 <div id="holder">
+    
+    <div>grav gr!d</div>
     
     <div id="svgHolder">
         
@@ -197,38 +193,21 @@ svg {
                      stroke="none"
                     ></circle>
                 </marker>
-                
-                <g id="gridgroup">
-                    <g id="ylines"></g>
-                    <g id="xlines"></g>
-                    <path id="planetLines"></path>
-                </g>
-                
-                <g id="axisgroup">
-                    <path id="xaxis" class="axisline"></path>
-                    <path id="yaxis" class="axisline"></path>
-                </g>
-                
-                <g id="totalgrid">
-                    <use href="#gridgroup"></use>
-                    <use href="#gridgroup" transform="scale(-1,1)"></use>
-                </g>
+        
                 
             </defs>
             
-            <use href="#totalgrid"></use>
-            <use href="#totalgrid" transform="rotate(180)"></use>
-            <use href="#axisgroup"></use>
-            <use href="#axisgroup" transform="rotate(180)"></use>
+            <g id="ylines"></g>
+            <g id="xlines"></g>
             
         </svg>
         
-        <svg id="svgPlanet"
+        <svg id="svgMass"
          xmlns:xlink="http://www.w3.org/2000/svg"
          width="100%"
          viewbox="-50 -20 100 40"
         >
-            <circle id="planet" cx="0" cy="0" r="0"></circle>
+            <g id="massgroup"></g>
             
         </svg>
         
@@ -240,277 +219,332 @@ svg {
          type="range"
          min="0"
          max="100"
+         step="1"
          value="0"
         />
     </div>
     
-    <div style="text-align:right;width:100%"><i>~queviva</i></div>
+    <div id="sig" style="text-align:right;width:100%"><i>~queviva</i></div>
     
 </div>
 </body>
 
 <script id="gravscript">
-    
-document.addEventListener('DOMContentLoaded', () => {
 
-    // prefs {
-    let count = 0;
-    
-    const bigG = 1;
+new Date() < new Date('2023-10-13') &&
 
-    const size = 5;
-    const lineWidth = 4;
-    const useDots = false;
-    const xdim = 140;
-    const ydim = 80;
-    const pz = 13;
-    const pRad = 12;
-    const valScale = 5.2;
-    //}
+((dset = document.currentScript.dataset) =>
+  document.addEventListener('DOMContentLoaded', () => {
     
-    // refs {
+        // prefs {
+        let count = 0;
     
-    const svgHolder = document.getElementById('svgHolder');
-    const xaxis = document.getElementById('xaxis');
-    const yaxis = document.getElementById('yaxis');
-    const xlines = document.getElementById('xlines');
-    const ylines = document.getElementById('ylines');
-    const planet = document.getElementById('planet');
-
-    const allPoints = [];
-
-    //}
+        const bigG = 1;
     
-    // methods and objects {
+        const size = 5;
+        const lineWidth = 2;
+        const useDots = false;
+        const xdim = 140;
+        const ydim = 80;
+        const valScale = 5.2;
     
-    function Point (x, y) {
-        
-        this.ox = x;
-        this.oy = y;
-        this.x = x;
-        this.y = y;
-        this.theta = Math.atan2(y, x);
-        this.cos = Math.cos(this.theta).toFixed(3);
-        this.sin = Math.sin(this.theta).toFixed(3);
-        
-        let dist = Math.sqrt(this.x*this.x + this.y*this.y);
-        this.acc = dist === 0 ? 0 : bigG * (1/(dist*dist));
-        
-    }
+        let masses = [
+            [-20, -7, 12]
+        ];
     
-    Point.prototype.recalc = function (dT = 0) {
-        
-        let D = (1/2) * this.acc * dT*dT;
-        
-        this.x = this.ox - D * this.cos;
-        this.y = this.oy - D * this.sin;
-        
-    };
+        //}
     
-    Point.prototype.makeSVG = function () {
-        return this.x +' '+ this.y +' ';
-    }
+        // refs {
     
-    function createLines (xy) {
-        
-        for(let i = 0, j = [ydim,xdim][xy]/size; i <= j; i++) {
-        
-            let tmpL = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'path'
-            );
-        
-            tmpL.classList.add('gridline');
-            tmpL.classList.add(['xline','yline'][xy]);
-            tmpL.style.strokeWidth = lineWidth;
+        const NS = 'http://www.w3.org/2000/svg';
+        const svgHolder = document.getElementById('svgHolder');
+        const xaxis = document.getElementById('xaxis');
+        const yaxis = document.getElementById('yaxis');
+        const xlines = document.getElementById('xlines');
+        const ylines = document.getElementById('ylines');
+        const massgroup = document.getElementById('massgroup');
+    
+        let allPts = (new Array(1 +
+        (2 * ydim / size)
+        )).fill(0);
+        let yPts = [];
+        let canUpdate = true;
+    
+        //}
+    
+        // methods and objects {
+    
+        function Point(x, y) {
+    
+            this.ox = x;
+            this.oy = y;
+            this.x = x;
+            this.y = y;
+            this.theta = Math.atan2(masses[0].y - y, masses[0].x - x);
+            this.cos = Math.cos(this.theta).toFixed(3);
+            this.sin = Math.sin(this.theta).toFixed(3);
             
-            //if(xy===0){
-            //tmpL.style.stroke = 'hsl(' + Math.random() * 360 + ',100%,50%)';
-            //}
+            this.xsign = Math.sign(x - masses[0].x);
+            this.ysign = Math.sign(y - masses[0].y);
             
-            if(useDots && xy === 0){
-                tmpL.classList.add('xlineDots');
+            this.acc = [];
+    
+            for (let i in masses) {
+                let dist = Math.sqrt(
+                    Math.pow((masses[i].x - this.x), 2) +
+                    Math.pow((masses[i].y - this.y), 2)
+                );
+                this.acc[i] = dist === 0 ? 0 : bigG * (1 / (dist * dist));
             }
-            
-            if (i === 0) {
-                let tmpX = [xaxis, yaxis][xy];
-                tmpL.classList.forEach(C => {
-                    tmpX.classList.add(C);
-                })
-            } else {
-                [xlines, ylines][xy].appendChild(tmpL);
-            }
+    
         }
-        
-    }
     
-    function drawX (pRad) {
-       
-        // initialize negative path
-        //let negD = '';
-        
-        // loop through all the x-grid lines and x-axis
-        for (let i = 0, z = [xaxis,...xlines.childNodes], j = z.length; i < j; i++) {
-            
-            // initialize positive path
-            let posD = '';
-            
-            // grab all positive points in the scope
-            let pozz = allPoints[i].filter(P => {
+        Point.prototype.recalc = function(dT = 0) {
+    
+            let D = (1 / 2) * this.acc[0] * dT * dT;
+    
+            this.x = this.ox + D * this.cos;
+            this.y = this.oy + D * this.sin;
+    
+            if (
+                this.xsign !== Math.sign(this.x - masses[0].x) ||
+                this.ysign !== Math.sign(this.y - masses[0].y)
+            ) {
+                this.x = masses[0].x;
+                this.y = masses[0].y;
+            }
+    
+        };
+    
+        Point.prototype.makeSVG = function() {
+            return this.x + ' ' + this.y + ' ';
+        }
+    
+        function Mass(x, y, r, off = 12) {
+    
+            this.ox = x;
+            this.oy = y;
+            this.or = r;
+            this.x = x;
+            this.y = y;
+            this.r = r;
+    
+            this.off = off;
+            this.set = r / (100 - off);
+    
+            this.obj = document.createElementNS(NS, 'circle');
+            this.obj.setAttribute('cx', x);
+            this.obj.setAttribute('cy', y);
+            this.obj.setAttribute('r', r);
+            this.obj.classList.add('mass');
+    
+            massgroup.appendChild(this.obj);
+    
+        }
+    
+        Mass.prototype.recalc = function(val) {
+    
+            this.obj.setAttribute('r', (
+                this.r = val / valScale < this.off ?
+                0 : this.set * (val / valScale - this.off)
+            ));
+    
+        };
+    
+        function createXlines() {
+    
+            for (let L in allPts) {
+    
+                let tmpL = document.createElementNS(NS, 'path');
+    
+                tmpL.classList.add(
+                    'gridline',
+                    allPts[L][0].y === 0 ? 'axisline' : 'xline'
+                );
                 
-                return P.x >=0 && P.y >= 0 && P.x < 58 && P.y < 30;
-                
-            });
-            
-            // grab all the negative points
-            let negz = allPoints[i].filter(P => P.x < 0 || P.y <0);
-            
-            // if there are any positive points ...
-            if (pozz.length !== 0) {
-                
-                // first check if there are negative points ...
-                if (negz.length !== 0) {
-            
-                    // then start line at zero-zero
-                    posD += 'M0 0 ';
-            
+                if (useDots) {
+                    tmpL.classList.add('xlineDots');
                 }
-                else { // otherwize ...
-            
-                    // start line at first positive point
-                    posD += 'M' + pozz[0].makeSVG();
-            
-                    // then remove it from the pos list
+    
+                tmpL.style.strokeWidth = allPts[L][0].y === 0 ? 1 : lineWidth;
+    
+                xlines.appendChild(tmpL);
+    
+            }
+    
+        }
+    
+        function createYlines() {
+    
+            for (let L of allPts[0]) {
+    
+                let tmpL = document.createElementNS(NS, 'path');
+    
+                tmpL.classList.add(
+                    'gridline',
+                    L.x === 0 ? 'axisline' : 'yline'
+                );
+    
+                tmpL.style.strokeWidth = L.x === 0 ? 1 : lineWidth;
+    
+                ylines.appendChild(tmpL);
+    
+            }
+    
+        }
+    
+        function drawXlines() {
+    
+            for (let L in allPts) {
+    
+                // grab all positive points in the scope
+                let pozz = allPts[L].filter(P => {
+    
+                    return (Math.abs(P.x) < 56 && Math.abs(P.y) < 30);
+    
+                });
+    
+                // if there are any positive points ...
+                if (pozz.length !== 0) {
+    
+                    // initialize positive line with first point
+                    let posD = 'M' + pozz[0].makeSVG();
+    
+                    // remove that point
                     pozz.shift();
-            
+    
+                    // loop through all remaining points
+                    pozz.forEach(P => posD += 'L' + P.makeSVG());
+    
+                    // add the path to the svg line
+                    xlines.childNodes[L].setAttribute('d', posD);
+    
                 }
-                
-                // loop through positive points
-                pozz.forEach((P, i) => {
-            
-                    // make a line out of them
-                    posD += 'L' + P.makeSVG();
-            
+    
+            }
+    
+        }
+    
+        function drawYlines() {
+    
+            for (let L in yPts) {
+    
+                // grab all positive points in the scope
+                let pozz = yPts[L].filter(P => {
+    
+                    return (Math.abs(P.x) < 56 && Math.abs(P.y) < 30);
+    
                 });
-                
-            }
-            
-            
-            /*
-            if (negz.length !== 0 && pRad >= 0) {
-                negz.forEach(P => {
-                    negD += 'M0 0L' +
-                    Math.abs(pRad * P.cos) +' '+
-                    Math.abs(pRad * P.sin) +' ';
-                });
-            }
-            */
-            
-            z[i].setAttribute('d', posD);
-        
-        }
-        
-        //planetLines.setAttribute('d', negD);
-        
-        
-    }
     
-    function drawY () {
-        
-        for (let i = 0, z = [yaxis,...ylines.childNodes], j = z.length; i < j; i++) {
-            
-            let tmpD = '';
-            
-            for (let k = 0, m = allPoints.length; k < m; k++) {
-            
-                if(allPoints[k][i].y > 30 || allPoints[k][i].x > 60) {break;}
-                
-                tmpD += (k === 0 ? 'M' : 'L') +
-                    (allPoints[k][i].x <= 0 ? 0 : allPoints[k][i].x) +
-                    ' ' +
-                    (allPoints[k][i].y <= 0 ? 0 : allPoints[k][i].y);
-                    
-            }
-            
-            z[i].setAttribute('d', tmpD);
-        
-        }
+                // if there are any positive points ...
+                if (pozz.length !== 0) {
     
-        
-    }
+                    // initialize positive line with first point
+                    let posD = 'M' + pozz[0].makeSVG();
     
-    function update (val = 0) {
+                    // remove that point
+                    pozz.shift();
     
-        // scale the mass
-        planet.setAttribute('r', val < pz ? 0 : pRad*(val - pz) / (100 - pz));
+                    // loop through all remaining points
+                    pozz.forEach(P => posD += 'L' + P.makeSVG());
     
-        // recalc all the points
-        for (let AP of allPoints) {
+                    // add the path to the svg line
+                    ylines.childNodes[L].setAttribute('d', posD);
     
-            for (let p of AP) {
-                p.recalc(val * valScale);
+                }
+    
             }
     
         }
     
-        // draw the x-lines
-        drawX(pRad*(val - pz) / (100 - pz));
+        function update(val = 0) {
     
-        // draw the y-lines
-        drawY();
+            // recalc the masses
+            masses.forEach(M => M.recalc(val * valScale));
     
-    }
+            // recalc the grid points
+            for (let AP of allPts) {
     
-    //}
+                for (let p of AP) {
+                    p.recalc(val * valScale);
+                }
     
-    // fill the points array {
-    for (let yind = 0, j = ydim/size; yind <= j; yind++) {
-        
-        allPoints[yind] = [];
-        
-        for (let xind = 0, k = xdim/size; xind <= k; xind++) {
-            
-            allPoints[yind][xind] = new Point(xind * size, yind * size);
-            
+            }
+    
+            // draw the x-lines
+            drawXlines();
+    
+            // draw the y-lines
+            drawYlines();
+    
         }
-        
-    }
-    //}
     
-    // create the lines {
-    createLines(0);
-    createLines(1);
-    //}
+        //}
     
-    // draw the lines {
-    update();
-    //}
+        ////////////////////////////////////////////////////////////
+    
+        // create the masses {
+        for (let M in masses) { masses[M] = new Mass(...masses[M]); }
+        //}
+    
+        // fill the points array {
+        for (let L in allPts) {
+            allPts[L] = (new Array(1 + (2 * xdim / size))).fill(0);
+            for (let P in allPts[L]) {
+                allPts[L][P] = new Point(-xdim + P * size, -ydim + L * size);
+            }
+        }
+    
+        // rotate that matrix for y-lines
+        for (let L in allPts[0]) {
+    
+            yPts[L] = [];
+    
+            for (let i = 0, j = allPts.length; i < j; i++) {
+                yPts[L].push(allPts[i][L]);
+            }
+    
+        }
+        //}
+    
+        // create the lines {
+        createXlines();
+        createYlines();
+        //}
+    
+        // draw the scene {
+        update();
+        //}
+    
+        ////////////////////////////////////////////////////////////
+    
+        // handlers {
+    
+        for (let [x, y, z] of [
+    
+                [svgHolder, 'wheel', e => {
+    
+                    e.preventDefault();
+                    count = [0, (count + e.deltaX / 20), 100].sort((a, b) => a - b)[1];
+                    slide0.value = count;
+    
+                }],
+    
+                [slide0, 'input', e => {
+                    count = parseInt(slide0.value);
+                }],
+    
+            ]) {
+            x.addEventListener(y, e => {
+                    z(e);
+                    update(Math.round(count));
+            });
+        }
+        //}
+    
+}))()
 
-    // handlers {
-    
-    for (let [x,y,z] of [
-        
-       [svgHolder, 'wheel', e => {
-           
-           e.preventDefault();
-           count=[0,(count+e.deltaX/20),100].sort((a,b)=>a-b)[1];
-           slide0.value = count;
-           
-       }],
-       
-       [slide0, 'input', e => {
-            count = parseInt(slide0.value);
-       }],
-    
-    ]){
-        x.addEventListener(y, e => {
-            z(e);
-            update(count);
-        });
-    }
-    //}
-    
-});
+=== undefined || (console.log('eXp!red'));
 
 </script>
 
