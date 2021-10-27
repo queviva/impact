@@ -128,7 +128,7 @@ svg {
 }
 
 .gridline {
-    stroke-width: 4;
+    stroke-width: 1;
     stroke: var(--dotcolor);
     stroke-linecap: round;
     fill: none;
@@ -151,18 +151,20 @@ svg {
 }
 
 .axisline{
-    xxxstroke-width: 1;
-    stroke: orange;
+    fill: none;
+    stroke: #e90;
+    stroke-width: 1;
     vector-effect: non-scaling-stroke;
 }
 
 .mass {
     xxopacity: 1.5;
-    fill: #ea0;
-    stroke: hsla(
+    fill: #e90;
+    stroke : #c70;
+    xxxstroke: hsla(
         var(--hue),calc(0.8 * var(--sat)),calc(0.4 * var(--lit)),0.8
     );
-    stroke-width: 8;
+    stroke-width: 5;
     vector-effect: non-scaling-stroke;
     xxxtransition: r 0.3s cubic-bezier(0.3, 1.2, 0.6, 1.6);
 }
@@ -202,11 +204,10 @@ svg {
                 
             </defs>
             
-            <!--path id="test" stroke="#d00" stroke-width="0.2"
-            d="M-28 -8 L28 8"
-            ></path-->
             <g id="ylines"></g>
             <g id="xlines"></g>
+            <path id="xaxis" class="axisline"></path>
+            <path id="yaxis" class="axisline"></path>
             
         </svg>
         
@@ -240,12 +241,17 @@ svg {
 
 <script id="gravscript">
 
+// expiration date {
 new Date() < new Date('2023-10-13') &&
 
 ((dset = document.currentScript.dataset) =>
 
   document.addEventListener('DOMContentLoaded', () => {
+      
+//}
     
+        ////////////////////////////////////////////////////////////
+        
         // prefs {
         let count = 0;
     
@@ -253,15 +259,25 @@ new Date() < new Date('2023-10-13') &&
     
         const size = 2;
         const lineWidth = 0.4;
-        const useDots = false;
+        const axisWidth = 2;
         const xdim = 140;
         const ydim = 80;
         const valScale = 0.8;
+        
+        const useDots = false;
+        const aniMass = false;
+        let once = false;
     
         let masses = [
+            // equilateral {
+            //[ 0, -12, 5, 0],
+            //[-12,  4, 5, 0],
+            //[ 12,  4, 5, 0]
+            // }
+            
              //[0, 0, 12, 0]
              [-21, -8, 5, 0]
-            ,[ 21,  8, 5, 0]
+            ,[ 25,  8, 3, 0]
             //,[ 32, -10, 2, 0]
         ];
     
@@ -270,7 +286,6 @@ new Date() < new Date('2023-10-13') &&
         // refs {
     
         const NS = 'http://www.w3.org/2000/svg';
-        const svgHolder = document.getElementById('svgHolder');
         const xaxis = document.getElementById('xaxis');
         const yaxis = document.getElementById('yaxis');
         const xlines = document.getElementById('xlines');
@@ -283,6 +298,11 @@ new Date() < new Date('2023-10-13') &&
         //}
     
         // methods and objects {
+        
+        const getDist = (A, B) => Math.sqrt( //{
+            Math.pow(A.x - B.x, 2) +
+            Math.pow(A.y - B.y, 2)
+        ); //}
     
         function Point(x, y) {
     
@@ -325,32 +345,20 @@ new Date() < new Date('2023-10-13') &&
     
         Point.prototype.recalc = function(dT = 0) {
             
-    
             let dx = 0;
             let dy = 0;
     
             for (let i in masses) {
-                
-                let dist = Math.sqrt(
-                    Math.pow((masses[i].x - this.x), 2) +
-                    Math.pow((masses[i].y - this.y), 2)
-                );
                 
                 let theta = Math.atan2(
                     masses[i].y - this.y,
                     masses[i].x - this.x
                 );
                 
-                let cos = Math.cos(theta);
-                let sin = Math.sin(theta);
-                //let acc = dist === 0 ? 0 : bigG / (dist * dist);
-                //let vel = this.acc[i] * dT;
-            
-                //let D = (1 / 2) * acc * dT * dT;
                 let D = this.acc[i] * dT * dT;
-            
-                dx += D * cos;
-                dy += D * sin;
+                
+                dx += D * Math.cos(theta);
+                dy += D * Math.sin(theta);
                 
             }
     
@@ -366,15 +374,7 @@ new Date() < new Date('2023-10-13') &&
             
             for (let i in masses) {
                 
-                if (
-                    
-                    Math.sqrt(dx*dx + dy*dy) >
-                    Math.sqrt(
-                        Math.pow((masses[i].x - this.x), 2) +
-                        Math.pow((masses[i].y - this.y), 2)
-                    )
-                    
-                ) {
+                if (Math.sqrt(dx*dx + dy*dy) > getDist(masses[i], this)) {
                     
                     this.threshold = dT;
                     this.rendX = masses[i].x;
@@ -407,7 +407,10 @@ new Date() < new Date('2023-10-13') &&
             this.obj.setAttribute('cy', y);
             this.obj.setAttribute('r', r);
             this.obj.classList.add('mass');
-            //this.obj.innerHTML = '<animate attributeName="stroke-width" begin="0s" dur="0.5s" repeatCount="indefinite" from="0" to="8"/>';
+            
+            if (aniMass) {
+                this.obj.innerHTML = '<animate attributeName="stroke-width" begin="0s" dur="0.5s" repeatCount="indefinite" from="0" to="8"/>';
+            }
     
             massgroup.appendChild(this.obj);
     
@@ -424,35 +427,21 @@ new Date() < new Date('2023-10-13') &&
     
         function createXlines() {
     
-            for (let L in allPts) {
-    
+            for (let L of allPts) {
+                
                 let tmpL = document.createElementNS(NS, 'path');
     
-                tmpL.classList.add(
-                    'gridline',
-                    allPts[L][0].y === 0 ? 'axisline' : 'xline'
-                );
+                tmpL.classList.add('gridline', 'xline');
                 
-                if (useDots) {
-                    tmpL.classList.add('xlineDots');
-                }
+                if (useDots) { tmpL.classList.add('xlineDots'); }
                 
-                //tmpL.style.stroke = 'hsl('+5+Math.random()*30+',100%,50%)';
-                
-                /*
-                if (allPts[L][0].y !== 0) {
+                if (L[0].y === 0) {
                     tmpL.style.display = 'none';
                 }
-                */
     
                 tmpL.style.strokeWidth = lineWidth;
                 
-                if (allPts[L][0].y === 0) {
-                    tmpL.style.strokeWidth = 2;
-                    tmpL.style.strokeWidth = 2;
-                }
-    
-                xlines.append(tmpL)
+                xlines.append(tmpL);
     
             }
     
@@ -464,13 +453,11 @@ new Date() < new Date('2023-10-13') &&
     
                 let tmpL = document.createElementNS(NS, 'path');
     
-                tmpL.classList.add(
-                    'gridline',
-                    L.x === 0 ? 'axisline' : 'yline'
-                );
+                tmpL.classList.add('gridline', 'yline');
                 
-                tmpL.style.strokeWidth = L.x === 0 ? 2 : lineWidth;
-                //tmpL.style.strokeWidth = lineWidth;
+                if (L.ox === 0) { tmpL.style.display = 'none'; }
+                
+                tmpL.style.strokeWidth = lineWidth;
     
                 ylines.appendChild(tmpL);
     
@@ -480,82 +467,54 @@ new Date() < new Date('2023-10-13') &&
     
         function drawXlines() {
     
+            // loop through every line in the points array
             for (const [n, L] of allPts.entries()) {
-    
-                // grab all positive points in the scope
-                let pozz = L.filter((P, i) => {
-    
-                    // oy! you have to store the index value
-                    P.idx = i;
-                    
-                    // this just has to be visually adjusted
-                    return (
-                        true
-                        //(Math.abs(P.x) < 50 && Math.abs(P.y) < 22)
-                        //||
-                        //(Math.abs(P.prev.x) < 50 && Math.abs(P.prev.y) < 22)
-                    );
-    
-                });
-    
-                // if there are any positive points ...
-                if (pozz.length !== 0) {
-                
-                    // start line at previous point
-                    //let posD = 'M' + L[pozz[0].idx - 1].makeSVG();
-                    let posD = 'M' + L[0].makeSVG();
-                    pozz.shift();
-                    
-                    // loop through all remaining points
-                    pozz.forEach(P => posD += 'L' + P.makeSVG());
-                    
-                    // end line with extra point
-                    //posD += 'L' +
-                    //L[pozz[pozz.length-1].idx + 1].makeSVG();
-    
-                    // add the path to the svg line
-                    xlines.childNodes[n].setAttribute('d', posD);
-    
+            
+                // start the path at the first point
+                let tmpD = 'M' + L[0].makeSVG();
+            
+                // loop through all remaining points
+                for (let i = 1, j = L.length; i < j; i++) {
+                    tmpD += 'L' + L[i].makeSVG();
                 }
-    
+            
+                // add the path to the svg tag
+                if (L[0].oy === 0) {
+                    xaxis.setAttribute('d', tmpD);
+                } else {
+                    xlines.childNodes[n].setAttribute('d', tmpD);
+                }
+            
             }
-    
+
         }
     
         function drawYlines() {
     
-            for (let L in yPts) {
-    
-                // grab all positive points in the scope
-                let pozz = yPts[L].filter(P => {
-    
-                    return true;//(Math.abs(P.x) < 56 && Math.abs(P.y) < 30);
-    
-                });
-    
-                // if there are any positive points ...
-                if (pozz.length !== 0) {
-    
-                    // initialize positive line with first point
-                    let posD = 'M' + pozz[0].makeSVG();
-    
-                    // remove that point
-                    pozz.shift();
-    
-                    // loop through all remaining points
-                    pozz.forEach(P => posD += 'L' + P.makeSVG());
-    
-                    // add the path to the svg line
-                    ylines.childNodes[L].setAttribute('d', posD);
-    
+            // loop through the y-lines array
+            for (const [n, L] of yPts.entries()) {
+                
+                // start the path at the first point
+                let tmpD = 'M' + L[0].makeSVG();
+                
+                // loop through all remaining points
+                for (let i = 1, j = L.length; i < j; i++) {
+                    tmpD += 'L' + L[i].makeSVG();
                 }
-    
+                
+                // add the path to the svg tag
+                if (L[0].ox === 0) {
+                    yaxis.setAttribute('d', tmpD);
+                } else {
+                    ylines.childNodes[n].setAttribute('d', tmpD);
+                }
+
             }
     
         }
         
         function update(val = 0) {
-
+            
             // recalc the masses
             masses.forEach(M => M.recalc(val * valScale));
     
@@ -607,6 +566,7 @@ new Date() < new Date('2023-10-13') &&
         // create the lines {
         createXlines();
         createYlines();
+        xaxis.style.strokeWidth = yaxis.style.strokeWidth = axisWidth;
         //}
     
         // draw the scene {
@@ -616,13 +576,16 @@ new Date() < new Date('2023-10-13') &&
         ////////////////////////////////////////////////////////////
     
         // handlers {
-    
+        
         for (let [x, y, z] of [
     
                 [svgHolder, 'wheel', e => {
     
                     e.preventDefault();
-                    count = [0, (count + e.deltaX / 20), 100].sort((a, b) => a - b)[1];
+                    if (Math.abs(e.deltaX) > 10) {
+                        count = [0, count + 1, 100].sort((a, b) => a - b)[1];
+                    }
+                    
                     slide0.value = count;
     
                 }],
@@ -638,15 +601,42 @@ new Date() < new Date('2023-10-13') &&
     
             ]) {
             x.addEventListener(y, e => {
-                    z(e);
-                    update(Math.round(count));
+                
+                if (Math.round(count) >= 50 && once) {
+                    
+                    console.log('adding');
+                    once = false;
+                    
+                    masses.push(new Mass(41, 8, 5, 50));
+                    
+                    for (let L in allPts) {
+                        for (let P of allPts[L]) {
+                
+                            let dist = getDist(masses[1], P);
+                            
+                            P.acc.push(
+                                dist === 0 ? 0 : bigG / (dist * dist)
+                            );
+                
+                        }
+                    }
+                
+                }
+                
+                z(e);
+                update(Math.round(count));
+                
             }, {passive:false});
         }
         //}
+
+// expire msg {
     
 }))()
 
 === undefined || (console.log('eXp!red'));
+
+// }
 
 </script>
 
