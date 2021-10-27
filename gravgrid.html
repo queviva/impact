@@ -19,6 +19,7 @@
 body {
     padding: 0px;
     margin: 0px;
+    background-color: #000;
     hyphens: auto;
 }
 
@@ -27,6 +28,7 @@ body {
     font-size: 24px;
     text-align: justify;
     max-width: 700px;
+    width: 100%;
     margin: auto;
     border: 1px solid #000;
     background-color: var(--backcolor);
@@ -56,7 +58,7 @@ a:hover {
 }
 
 input {
-    --thumbH : 30px;
+    --thumbH : 40px;
     --color: 48, 100%;
     --lightness: 88%;
     --midness:  var(--lightness);/*calc(0.37 * var(--lightness));*/
@@ -89,6 +91,7 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]:focus {
     outline: none;
 }
+
 </style>
 <style>
 
@@ -143,7 +146,8 @@ svg {
 }
 
 .yline {
-    xstroke: red;
+
+    
 }
 
 .axisline{
@@ -180,6 +184,7 @@ svg {
          preserveAspectRatio="none"
         >
             <defs>
+                
                 <marker id="dot" refX="10" refY="10"
                  vector-effect="non-scaling-size"
                  markerUnits="userSpaceOnUse"
@@ -187,7 +192,7 @@ svg {
                  markerHeight="20"
                  orient="auto"
                 >
-                    <circle cx="10" cy="10" r="0.8"
+                    <circle cx="10" cy="10" r="0.4"
                      vector-effect="non-scaling-size"
                      fill="var(--dotcolor)"
                      stroke="none"
@@ -197,6 +202,9 @@ svg {
                 
             </defs>
             
+            <!--path id="test" stroke="#d00" stroke-width="0.2"
+            d="M-28 -8 L28 8"
+            ></path-->
             <g id="ylines"></g>
             <g id="xlines"></g>
             
@@ -209,6 +217,7 @@ svg {
         >
             <g id="massgroup"></g>
             
+
         </svg>
         
     </div>
@@ -234,6 +243,7 @@ svg {
 new Date() < new Date('2023-10-13') &&
 
 ((dset = document.currentScript.dataset) =>
+
   document.addEventListener('DOMContentLoaded', () => {
     
         // prefs {
@@ -241,15 +251,18 @@ new Date() < new Date('2023-10-13') &&
     
         const bigG = 1;
     
-        const size = 5;
-        const lineWidth = 2;
+        const size = 2;
+        const lineWidth = 0.4;
         const useDots = false;
         const xdim = 140;
         const ydim = 80;
-        const valScale = 5.2;
+        const valScale = 1.2;
     
         let masses = [
-            [-20, -7, 12]
+             //[0, 0, 12, 0]
+             [-21, -8, 8, 0]
+            ,[ 21,  8, 8, 0]
+            //,[ 32, -10, 2, 0]
         ];
     
         //}
@@ -264,11 +277,8 @@ new Date() < new Date('2023-10-13') &&
         const ylines = document.getElementById('ylines');
         const massgroup = document.getElementById('massgroup');
     
-        let allPts = (new Array(1 +
-        (2 * ydim / size)
-        )).fill(0);
+        let allPts = (new Array(1 + (2 * ydim / size))).fill(0);
         let yPts = [];
-        let canUpdate = true;
     
         //}
     
@@ -280,45 +290,105 @@ new Date() < new Date('2023-10-13') &&
             this.oy = y;
             this.x = x;
             this.y = y;
-            this.theta = Math.atan2(masses[0].y - y, masses[0].x - x);
-            this.cos = Math.cos(this.theta).toFixed(3);
-            this.sin = Math.sin(this.theta).toFixed(3);
+            this.rendX = x;
+            this.rendY = y;
             
-            this.xsign = Math.sign(x - masses[0].x);
-            this.ysign = Math.sign(y - masses[0].y);
-            
+            this.theta = [];
+            this.cos = [];
+            this.sin = [];
             this.acc = [];
+            
+            this.xsign = [];
+            this.ysign = [];
+            
+            this.threshold = Infinity;
+            
     
             for (let i in masses) {
+                
                 let dist = Math.sqrt(
                     Math.pow((masses[i].x - this.x), 2) +
                     Math.pow((masses[i].y - this.y), 2)
                 );
-                this.acc[i] = dist === 0 ? 0 : bigG * (1 / (dist * dist));
+                
+                this.theta[i] = Math.atan2(masses[i].y - y, masses[i].x - x);
+                this.cos[i] = Math.cos(this.theta[i]);
+                this.sin[i] = Math.sin(this.theta[i]);
+                this.acc[i] = dist === 0 ? 0 : bigG / (dist * dist);
+                
+                this.xsign[i] = Math.sign(this.ox - masses[i].x);
+                this.ysign[i] = Math.sign(this.oy - masses[i].y);
+                
             }
     
         }
     
         Point.prototype.recalc = function(dT = 0) {
+            
     
-            let D = (1 / 2) * this.acc[0] * dT * dT;
+            let dx = 0;
+            let dy = 0;
     
-            this.x = this.ox + D * this.cos;
-            this.y = this.oy + D * this.sin;
+            for (let i in masses) {
+                
+                let dist = Math.sqrt(
+                    Math.pow((masses[i].x - this.x), 2) +
+                    Math.pow((masses[i].y - this.y), 2)
+                );
+                
+                let theta = Math.atan2(
+                    masses[i].y - this.y,
+                    masses[i].x - this.x
+                );
+                
+                let cos = Math.cos(theta);
+                let sin = Math.sin(theta);
+                //let acc = dist === 0 ? 0 : bigG / (dist * dist);
+                //let vel = this.acc[i] * dT;
+            
+                //let D = (1 / 2) * acc * dT * dT;
+                let D = this.acc[i] * dT * dT;
+            
+                dx += D * cos;
+                dy += D * sin;
+                
+            }
     
-            if (
-                this.xsign !== Math.sign(this.x - masses[0].x) ||
-                this.ysign !== Math.sign(this.y - masses[0].y)
-            ) {
-                this.x = masses[0].x;
-                this.y = masses[0].y;
+            this.x += dx;
+            this.y += dy;
+            
+            if (dT > this.threshold) {
+                return;
+            }
+            
+            this.rendX = this.x;
+            this.rendY = this.y;
+            
+            for (let i in masses) {
+                
+                if (
+                    
+                    Math.sqrt(dx*dx + dy*dy) >
+                    Math.sqrt(
+                        Math.pow((masses[i].x - this.x), 2) +
+                        Math.pow((masses[i].y - this.y), 2)
+                    )
+                    
+                ) {
+                    
+                    this.threshold = dT;
+                    this.rendX = masses[i].x;
+                    this.rendY = masses[i].y;
+                    break;
+                    
+                }
             }
     
         };
     
         Point.prototype.makeSVG = function() {
-            return this.x + ' ' + this.y + ' ';
-        }
+            return this.rendX.toFixed(3) + ' ' + this.rendY.toFixed(3) + ' ';
+        };
     
         function Mass(x, y, r, off = 12) {
     
@@ -337,6 +407,7 @@ new Date() < new Date('2023-10-13') &&
             this.obj.setAttribute('cy', y);
             this.obj.setAttribute('r', r);
             this.obj.classList.add('mass');
+            //this.obj.innerHTML = '<animate attributeName="stroke-width" begin="0s" dur="0.5s" repeatCount="indefinite" from="0" to="8"/>';
     
             massgroup.appendChild(this.obj);
     
@@ -365,10 +436,23 @@ new Date() < new Date('2023-10-13') &&
                 if (useDots) {
                     tmpL.classList.add('xlineDots');
                 }
+                
+                //tmpL.style.stroke = 'hsl('+5+Math.random()*30+',100%,50%)';
+                
+                /*
+                if (allPts[L][0].y !== 0) {
+                    tmpL.style.display = 'none';
+                }
+                */
     
-                tmpL.style.strokeWidth = allPts[L][0].y === 0 ? 1 : lineWidth;
+                tmpL.style.strokeWidth = lineWidth;
+                
+                if (allPts[L][0].y === 0) {
+                    tmpL.style.strokeWidth = 2;
+                    tmpL.style.strokeWidth = 2;
+                }
     
-                xlines.appendChild(tmpL);
+                xlines.append(tmpL)
     
             }
     
@@ -384,8 +468,9 @@ new Date() < new Date('2023-10-13') &&
                     'gridline',
                     L.x === 0 ? 'axisline' : 'yline'
                 );
-    
-                tmpL.style.strokeWidth = L.x === 0 ? 1 : lineWidth;
+                
+                tmpL.style.strokeWidth = L.x === 0 ? 2 : lineWidth;
+                //tmpL.style.strokeWidth = lineWidth;
     
                 ylines.appendChild(tmpL);
     
@@ -395,29 +480,41 @@ new Date() < new Date('2023-10-13') &&
     
         function drawXlines() {
     
-            for (let L in allPts) {
+            for (const [n, L] of allPts.entries()) {
     
                 // grab all positive points in the scope
-                let pozz = allPts[L].filter(P => {
+                let pozz = L.filter((P, i) => {
     
-                    return (Math.abs(P.x) < 56 && Math.abs(P.y) < 30);
+                    // oy! you have to store the index value
+                    P.idx = i;
+                    
+                    // this just has to be visually adjusted
+                    return (
+                        true
+                        //(Math.abs(P.x) < 50 && Math.abs(P.y) < 22)
+                        //||
+                        //(Math.abs(P.prev.x) < 50 && Math.abs(P.prev.y) < 22)
+                    );
     
                 });
     
                 // if there are any positive points ...
                 if (pozz.length !== 0) {
-    
-                    // initialize positive line with first point
-                    let posD = 'M' + pozz[0].makeSVG();
-    
-                    // remove that point
+                
+                    // start line at previous point
+                    //let posD = 'M' + L[pozz[0].idx - 1].makeSVG();
+                    let posD = 'M' + L[0].makeSVG();
                     pozz.shift();
-    
+                    
                     // loop through all remaining points
                     pozz.forEach(P => posD += 'L' + P.makeSVG());
+                    
+                    // end line with extra point
+                    //posD += 'L' +
+                    //L[pozz[pozz.length-1].idx + 1].makeSVG();
     
                     // add the path to the svg line
-                    xlines.childNodes[L].setAttribute('d', posD);
+                    xlines.childNodes[n].setAttribute('d', posD);
     
                 }
     
@@ -432,7 +529,7 @@ new Date() < new Date('2023-10-13') &&
                 // grab all positive points in the scope
                 let pozz = yPts[L].filter(P => {
     
-                    return (Math.abs(P.x) < 56 && Math.abs(P.y) < 30);
+                    return true;//(Math.abs(P.x) < 56 && Math.abs(P.y) < 30);
     
                 });
     
@@ -456,9 +553,9 @@ new Date() < new Date('2023-10-13') &&
             }
     
         }
-    
+        
         function update(val = 0) {
-    
+
             // recalc the masses
             masses.forEach(M => M.recalc(val * valScale));
     
@@ -533,12 +630,17 @@ new Date() < new Date('2023-10-13') &&
                 [slide0, 'input', e => {
                     count = parseInt(slide0.value);
                 }],
+                
+                [svgHolder, 'dblclick', e => {
+                    e.preventDefault();
+                    slide0.value = (count = 0);
+                }]
     
             ]) {
             x.addEventListener(y, e => {
                     z(e);
                     update(Math.round(count));
-            });
+            }, {passive:false});
         }
         //}
     
