@@ -175,7 +175,7 @@ svg {
 <body>
 <div id="holder">
     
-    <div>grav gr!d</div>
+    <div>grav&middot;LoX</div>
     
     <div id="svgHolder">
         
@@ -223,7 +223,7 @@ svg {
         
     </div>
     
-    <div id="slideDiv" style="padding:10px 0px;margin:0;">
+    <!--div id="slideDiv" style="padding:10px 0px;margin:0;">
         <input
          id="slide0"
          type="range"
@@ -232,7 +232,7 @@ svg {
          step="1"
          value="0"
         />
-    </div>
+    </div-->
     
     <div id="sig" style="text-align:right;width:100%"><i>~queviva</i></div>
     
@@ -253,21 +253,19 @@ new Date() < new Date('2023-10-13') &&
         ////////////////////////////////////////////////////////////
         
         // prefs {
-        let count = 0;
-    
-        const bigG = 1;
     
         const size = 2;
         const lineWidth = 0.4;
-        const axisWidth = 2;
+        const axisWidth = 1.5;
         const xdim = 140;
         const ydim = 80;
         const valScale = 0.8;
         
         const useDots = false;
         const aniMass = false;
-        let once = false;
     
+        const bigG = 1;
+        
         let masses = [
             // equilateral {
             //[ 0, -12, 5, 0],
@@ -275,15 +273,17 @@ new Date() < new Date('2023-10-13') &&
             //[ 12,  4, 5, 0]
             // }
             
-             //[0, 0, 12, 0]
-             [-21, -8, 5, 0]
-            ,[ 25,  8, 3, 0]
+            // [0, 0, 12, 0]
+             [-22, -8, 5, 0]
+            ,[ 26,  8, 3, 0]
             //,[ 32, -10, 2, 0]
         ];
     
         //}
     
         // refs {
+        
+        let count = 0;
     
         const NS = 'http://www.w3.org/2000/svg';
         const xaxis = document.getElementById('xaxis');
@@ -312,6 +312,8 @@ new Date() < new Date('2023-10-13') &&
             this.y = y;
             this.rendX = x;
             this.rendY = y;
+            
+            this.mem = new Array(100);
             
             this.theta = [];
             this.cos = [];
@@ -343,7 +345,19 @@ new Date() < new Date('2023-10-13') &&
     
         }
     
-        Point.prototype.recalc = function(dT = 0) {
+        Point.prototype.recalc = function() {
+            
+            let dT = count * valScale;
+            
+            if (this.mem[count]) {
+                this.x = this.rendX = this.mem[count].x;
+                this.y = this.rendY = this.mem[count].y;
+                return;
+            }
+            
+            if (dT > this.threshold) {
+                return;
+            }
             
             let dx = 0;
             let dy = 0;
@@ -365,10 +379,6 @@ new Date() < new Date('2023-10-13') &&
             this.x += dx;
             this.y += dy;
             
-            if (dT > this.threshold) {
-                return;
-            }
-            
             this.rendX = this.x;
             this.rendY = this.y;
             
@@ -383,6 +393,8 @@ new Date() < new Date('2023-10-13') &&
                     
                 }
             }
+            
+            this.mem[count] = { x: this.rendX, y: this.rendY };
     
         };
     
@@ -520,11 +532,13 @@ new Date() < new Date('2023-10-13') &&
     
             // recalc the grid points
             for (let AP of allPts) {
-    
+                
                 for (let p of AP) {
+                    
                     p.recalc(val * valScale);
+                    
                 }
-    
+                
             }
     
             // draw the x-lines
@@ -579,54 +593,32 @@ new Date() < new Date('2023-10-13') &&
         
         for (let [x, y, z] of [
     
-                [svgHolder, 'wheel', e => {
-    
-                    e.preventDefault();
-                    if (Math.abs(e.deltaX) > 10) {
-                        count = [0, count + 1, 100].sort((a, b) => a - b)[1];
+            [svgHolder, 'wheel', e => {
+            
+                e.preventDefault();
+            
+                if (Math.abs(e.deltaX) > 5) {
+                    let c = count;
+                    c = [0, c + 1 * Math.sign(e.deltaX), 100]
+                        .sort((a, b) => a - b)[1];
+            
+                    if (c !== count) {
+                        count = c;
+                        update(count);
                     }
-                    
-                    slide0.value = count;
-    
-                }],
-    
-                [slide0, 'input', e => {
-                    count = parseInt(slide0.value);
-                }],
-                
-                [svgHolder, 'dblclick', e => {
-                    e.preventDefault();
-                    slide0.value = (count = 0);
-                }]
-    
-            ]) {
-            x.addEventListener(y, e => {
-                
-                if (Math.round(count) >= 50 && once) {
-                    
-                    console.log('adding');
-                    once = false;
-                    
-                    masses.push(new Mass(41, 8, 5, 50));
-                    
-                    for (let L in allPts) {
-                        for (let P of allPts[L]) {
-                
-                            let dist = getDist(masses[1], P);
-                            
-                            P.acc.push(
-                                dist === 0 ? 0 : bigG / (dist * dist)
-                            );
-                
-                        }
-                    }
-                
+            
                 }
-                
-                z(e);
-                update(Math.round(count));
-                
-            }, {passive:false});
+            
+            }],
+    
+            [svgHolder, 'dblclick', e => {
+                e.preventDefault();
+                (count = 0);
+                update(count);
+            }]
+    
+        ]) {
+            x.addEventListener(y, z, {passive:false});
         }
         //}
 
