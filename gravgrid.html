@@ -1,8 +1,8 @@
 <!doctype html><html>
     
-<head><title>gravgrid</title>
+<head><title>gravLox</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
+<style id="docStyles">
 
 * {
     box-sizing: border-box;
@@ -34,6 +34,18 @@ body {
     background-color: var(--backcolor);
     color: var(--color);
     z-index: 2;
+}
+
+#discussion {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    height: 200px;
+    overflow: auto;
+}
+
+.addendum {
+    font-size: 0.9em;
+    opacity: .3;
 }
 
 div {
@@ -93,7 +105,7 @@ input[type=range]:focus {
 }
 
 </style>
-<style>
+<style id="svgStyles">
 
 svg {
     width: 100%;
@@ -111,12 +123,21 @@ svg {
     overflow: hidden;
 }
 
+#gravLox {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    opacity: 0.3;
+    font-style: italic;
+    font-size: 20px;
+}
+
 #svgGrid {
     padding: 0; margin: 0;
     position: absolute;
     top:0;
     overflow: visible;
-    xxxtransform: perspective(400px) rotateX(45deg);
+    xxxtransform: perspective(400px) rotateX(75deg);
     z-index:-1;
 }
 
@@ -124,6 +145,7 @@ svg {
     padding: 0; margin: 0;
     top:0;
     position: absolute;
+    xxxtransform: perspective(400px) rotateX(-15deg);
     xxxoverflow hidden;
 }
 
@@ -170,14 +192,53 @@ svg {
 }
 
 </style>
+<style id="mathStyles">
+
+frac {
+    display: inline-grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    font-style: italic;
+    font-size: 0.6em;
+    vertical-align: middle;
+    text-align: center;
+}
+
+
+num { border-bottom: 1px solid; }
+
+num::before {content: "\00a0\00a0"; }
+num::after {content: "\00a0\00a0"; }
+
+sup { font-size: 0.6em; }
+
+par {
+    font-size: 1.3em;
+    vertical-align: middle;
+}
+com { font-size: 0.5em; }
+com::before{ content: "\00a0\00a0\00a0["; }
+com::after{ content: "]"; }
+
+whr {
+    border-left: 1px solid;
+    padding: 0.5em;
+    margin-left: 1.25em;
+    font-size: 0.7em;
+    vertical-align: middle;
+}
+
+dd { margin-top: 15px; }
+
+</style>
 </head>
 
 <body>
 <div id="holder">
     
-    <div>grav&middot;LoX</div>
-    
     <div id="svgHolder">
+        
+        <div id="gravLox" >grav&middot;LoX</div>
         
         <svg id="svgGrid"
          xmlns:xlink="http://www.w3.org/2000/svg"
@@ -223,6 +284,320 @@ svg {
         
     </div>
     
+    <div id="discussion">
+        
+        <p>
+            In this scene, <i>E</i> = m<i>c</i><sup>2</sup>&nbsp;
+        
+            and you ought to recognize that the letter&nbsp;<i>c</i>
+            in that equation
+            refers to a <i>speed</i>; specifically,
+            the speed of light.
+        </p>
+        
+        <p>
+            Now, you also know that the little number two:
+            <sup>2</sup> &nbsp;means <i>squared</i>,
+            which is the same as saying "times itself"
+        </p>
+        
+        <p>
+            We can re-write that equation as:
+            <dd>
+            <i>E</i> = m &middot; <i>c</i> &middot; <i>c</i>
+            </dd>
+        </p>
+        
+        <p>
+            Normally when you think of speed, you think of it in terms
+            of some fraction - that is, "some distance per time" like
+            "miles per hour" or "meters per second" or "furlongs per
+            fortnight" - whatever you want, <i>speed</i> is typically
+            expressed as some quantity of distance being covered in
+            some amount of time.
+        </p>
+        
+        <p>
+            That distance could be in any direction, in three dimensions;
+            it doesn't <i>have</i> to be in only one dimension;
+            normally you drive straight ahead, but you could go
+            left-and-right, forward-and-backwards, or even up-and-down
+            if you're flying - so
+            speed can be thought of as an amount of <i>space</i>
+            being covered in a given <i>time</i>.
+        </p>
+        
+        <p>
+            We could say that:
+            <dd>
+            <i>speed</i> = <frac> <num>space</num> time </frac>
+            </dd>
+        </p>
+        
+        <p>
+            Exactly how much space being covered, and passing time,
+            the speed of light contains is not imporant -
+            whatever the
+            exact numbers are, we don't care for now; we just need
+            to understand that the letter&nbsp;<i>c</i> refers to
+            some amount of <frac><num>space</num>time</frac>
+        </p>
+        
+        <p>
+            Substituting that fraction for <i>c</i>
+            in the equation, we should get:
+            <dd>
+                <i>E</i> = m &middot; <i>c</i> &middot; <i>c</i>
+                <whr>
+                <i>c</i> = <frac><num>space</num>time</frac>
+                &Implies;
+                </whr>
+                <br><br>
+                <i>E</i> = m
+                &middot; <frac><num>space</num>time</frac>
+                &middot; <frac><num>space</num>time</frac>
+            </dd>
+        </p>
+        
+        <p>
+            With a little algebra, we can move one of those fractions
+            to the other side:
+            <dd>
+                <i>E</i> = m
+                &middot; <frac><num>space</num>time</frac>
+                &middot; <frac><num>space</num>time</frac>
+            </dd>
+            <dd>
+                <i>E</i>
+                &middot;
+                <frac><num>time</num>space</frac>
+                =
+                m
+                &middot; <frac><num>space</num>time</frac>
+                &middot; <frac><num>space</num>time</frac>
+                &middot; <frac><num>time</num>space</frac>
+                <com>
+                 multiply both sides by
+                 <frac><num>time</num>space</frac>
+                </com>
+            </dd>
+            <dd>
+                <i>E</i>
+                &middot;
+                <frac><num>time</num>space</frac>
+                =
+                m
+                &middot; <frac><num>space</num>time</frac>
+                &middot;
+                <frac><num>
+                    <strike>space</strike>
+                    </num><strike>time</strike>
+                </frac>
+                &middot;
+                <frac><num>
+                    <strike>time</strike>
+                    </num><strike>space</strike>
+                </frac>
+                <com> cancel out </com>
+            </dd>
+             <dd>
+                <i>E</i>
+                &middot;
+                <frac><num>time</num>space</frac>
+                =
+                m
+                &middot; <frac><num>space</num>time</frac>
+            </dd>
+        </p>
+        
+        <p>
+            Since we don't care about the exact values,
+            these two things aren't <i>technically</i>
+            equal; so
+            what we mean is that they are <i>proportional</i>
+            conceptually.
+            We can phrase that like this:
+            <dd>
+                <i>E</i>
+                &middot; <frac><num>time</num>space</frac>
+                &prop;
+                m
+                &middot; <frac><num>space</num>time</frac>
+            </dd>
+        </p>
+        
+        <p>
+            This is the relationship between energy <i>E</i>
+            and mass <i>m</i>
+            used for the computations
+            in this scene.
+            Energy and mass are proportional to eachother
+            in this way:
+        </p>
+        
+        <p>
+            <dd>
+                <frac>
+                    <num>E &middot; time</num>
+                    space
+                </frac>
+                &prop;
+                <frac>
+                    <num>m &middot; space</num>
+                    time
+                </frac>
+            </dd>
+        </p>
+        
+        <p>
+            When you have a fraction, it means that one thing
+            is <i>divided up</i>
+            over some other thing - if you have, say $80, and
+            you 'divided it up' among ten people, what that
+            means is, you're 'spreading out' the eighty dollars
+            over the ten people.
+        </p>
+        
+        <p>
+            If a farm has 30,000 stalks of corn 'per acre' that means
+            the stalks are spread out over the acres.
+        </p>
+        
+        <p>
+            What we mean by
+            <frac><num>m &middot; space</num> time</frac>
+            is that some amount of mass and space is evenly distributed
+            over <i>time.</i>
+        </p>
+        
+        <p>
+            Saying that something is 'evenly distributed over time'
+            just means that the thing <i>exists.</i>
+        </p>
+        
+        <p>
+            If an object did not persist for any amount of time,
+            then it wouldn't exist by the standards of what
+            the term 'exist' typically means.  That an object
+            has length and width and depth is only applicable
+            if it also has <i>persistence.</i>
+        </p>
+        
+        <p>
+            Your company leases a storage unit - the unit is
+            rented based on its dimensions, length, width, height,
+            but also by its duration, that is, the time of
+            the lease. If you have a six-month lease on a storage
+            unit, sure your company has access to
+            8&times;10&times;12 feets
+            of space, but after that six months expires, it's
+            no longer applicable to anything your company does.
+        </p>
+        
+        <p>
+            Similarly, if there weren't any <i>dimension</i>
+            for an object to exist in, then it wouldn't exist.
+            If you only had two dimensions, then 'spheres'
+            would only exist as whatever circle happens to
+            be intersecting the plane of your existence.
+            There needs to be some space for mass to occupy.
+            Your company better rent a storage unit with
+            enough dimensions to hold whatever you need to store.
+        </p>
+        
+        <p>
+            By saying
+            <frac><num>m &middot; space</num>time</frac>
+            we mean that there is some stuff, mass, and it
+            occupies some dimension, space, and all of that
+            is evenly distributed over time - it all persists.
+        </p>
+        
+        <p>
+            On the other side of the equation, we have
+            <frac><num>E &middot; time</num>space</frac>
+            by which we mean that there is some amount
+            of energy and some time, and all of that is
+            evenly distributed throughout space. Energy
+            and time are spread out into the space.
+        </p>
+        
+        <p>
+            In this scene, the universe has had a grid
+            laid out over it, in order for you to visualize
+            it more easily - each section of the grid
+            contains some amount of energy as well as some time.
+        </p>
+        
+        <p>
+            Scrolling over the scene causes specific locations
+            to begin <i>consuming</i> the space around them.
+        </p>
+        
+        <p>
+            These locations devour the space around them
+            and convert that into an object; the objects
+            exist in the dimensions that were converted
+            from the space around them, and all of that
+            persists throughout the time which was also
+            pulled through from the grid.
+        </p>
+        
+        <p>
+            That is to say, when you start scrolling,
+            things start moving from one side of the
+            equation to the other.
+            <dd>
+                <frac><num>E &middot; time</num>space</frac>
+                &rrarr;
+                &#x21f6;
+                <frac><num>m &middot; space</num>time</frac>
+            </dd>
+            <br>
+            Objects get formed, those objects occupy the
+            dimensions that got formed, and all of that
+            exists for the time that got pulled through
+            the equation.
+        </p>
+        
+        <p>
+            Again, the masses injest the grid, and turn
+            it into more mass - this consumption causes
+            the grid to warp.
+            Eventually, the distortion forms a very strong
+            and noticable connection between the
+            centers-of-mass of each object.
+        </p>
+        
+        <p>
+            The grid does not warp to accomodate the mass;
+            neither does the presence of the mass cause
+            space to warp.
+        </p>
+        
+        <p>
+            The masses <i>are</i> the wrapping of space
+            up into a ball.
+            Energy and time-space are sucked through to
+            the opposite side of the equation, and that
+            forms an object.
+        </p>
+        
+        <p>
+            The 'attraction' the objects have towards
+            eachother's center <i>is</i> the distortion
+            that occurs as the objects swallow the
+            surrounding grid-space.
+        </p>
+        
+        <p class="addendum">
+        </p>
+        
+        <p id="sig" style="text-align:right;width:100%"><i>~queviva</i></p>
+        
+    </div>
+    
+    
     <!--div id="slideDiv" style="padding:10px 0px;margin:0;">
         <input
          id="slide0"
@@ -234,7 +609,6 @@ svg {
         />
     </div-->
     
-    <div id="sig" style="text-align:right;width:100%"><i>~queviva</i></div>
     
 </div>
 </body>
@@ -256,7 +630,7 @@ new Date() < new Date('2023-10-13') &&
     
         const size = 2;
         const lineWidth = 0.4;
-        const axisWidth = 1.5;
+        const axisWidth = 0.5;
         const xdim = 140;
         const ydim = 80;
         const valScale = 0.8;
@@ -274,8 +648,8 @@ new Date() < new Date('2023-10-13') &&
             // }
             
             // [0, 0, 12, 0]
-             [-22, -8, 5, 0]
-            ,[ 26,  8, 3, 0]
+             [-22, -8, 5, 5]
+            ,[ 26,  8, 3, 5]
             //,[ 32, -10, 2, 0]
         ];
     
@@ -294,6 +668,9 @@ new Date() < new Date('2023-10-13') &&
     
         let allPts = (new Array(1 + (2 * ydim / size))).fill(0);
         let yPts = [];
+        
+        let xlineObjs = [];
+        let ylineObjs = [];
     
         //}
     
@@ -313,33 +690,18 @@ new Date() < new Date('2023-10-13') &&
             this.rendX = x;
             this.rendY = y;
             
-            this.mem = new Array(100);
-            
-            this.theta = [];
-            this.cos = [];
-            this.sin = [];
             this.acc = [];
             
-            this.xsign = [];
-            this.ysign = [];
+            this.mem = new Array(100);
             
             this.threshold = Infinity;
             
     
             for (let i in masses) {
                 
-                let dist = Math.sqrt(
-                    Math.pow((masses[i].x - this.x), 2) +
-                    Math.pow((masses[i].y - this.y), 2)
-                );
+                let dist = getDist(masses[i], this);
                 
-                this.theta[i] = Math.atan2(masses[i].y - y, masses[i].x - x);
-                this.cos[i] = Math.cos(this.theta[i]);
-                this.sin[i] = Math.sin(this.theta[i]);
                 this.acc[i] = dist === 0 ? 0 : bigG / (dist * dist);
-                
-                this.xsign[i] = Math.sign(this.ox - masses[i].x);
-                this.ysign[i] = Math.sign(this.oy - masses[i].y);
                 
             }
     
@@ -347,15 +709,16 @@ new Date() < new Date('2023-10-13') &&
     
         Point.prototype.recalc = function() {
             
-            let dT = count * valScale;
-            
             if (this.mem[count]) {
                 this.x = this.rendX = this.mem[count].x;
                 this.y = this.rendY = this.mem[count].y;
                 return;
             }
             
+            let dT = count * valScale;
+            
             if (dT > this.threshold) {
+                this.mem[count] = { x: this.rendX, y: this.rendY };
                 return;
             }
             
@@ -384,7 +747,7 @@ new Date() < new Date('2023-10-13') &&
             
             for (let i in masses) {
                 
-                if (Math.sqrt(dx*dx + dy*dy) > getDist(masses[i], this)) {
+                if (Math.sqrt(dx*dx + dy*dy) >= getDist(masses[i], this)) {
                     
                     this.threshold = dT;
                     this.rendX = masses[i].x;
@@ -428,8 +791,13 @@ new Date() < new Date('2023-10-13') &&
     
         }
     
+        Mass.prototype.moveTo = function (x, y) {
+            this.obj.setAttribute('cx', x);
+            this.obj.setAttribute('cy', y);
+        };
+        
         Mass.prototype.recalc = function(val) {
-    
+            
             this.obj.setAttribute('r', (
                 this.r = val / valScale < this.off ?
                 0 : this.set * (val / valScale - this.off)
@@ -447,15 +815,16 @@ new Date() < new Date('2023-10-13') &&
                 
                 if (useDots) { tmpL.classList.add('xlineDots'); }
                 
-                if (L[0].y === 0) {
-                    tmpL.style.display = 'none';
-                }
-    
                 tmpL.style.strokeWidth = lineWidth;
                 
                 xlines.append(tmpL);
+                
+                xlineObjs.push(tmpL);
     
             }
+            
+            xlineObjs[ydim/2].style.display = 'none';
+            xlineObjs[ydim/2] = xaxis;
     
         }
     
@@ -467,13 +836,16 @@ new Date() < new Date('2023-10-13') &&
     
                 tmpL.classList.add('gridline', 'yline');
                 
-                if (L.ox === 0) { tmpL.style.display = 'none'; }
-                
                 tmpL.style.strokeWidth = lineWidth;
     
                 ylines.appendChild(tmpL);
+                
+                ylineObjs.push(tmpL);
     
             }
+            
+            ylineObjs[xdim/2].style.display = 'none';
+            ylineObjs[xdim/2] = yaxis;
     
         }
     
@@ -489,13 +861,9 @@ new Date() < new Date('2023-10-13') &&
                 for (let i = 1, j = L.length; i < j; i++) {
                     tmpD += 'L' + L[i].makeSVG();
                 }
-            
-                // add the path to the svg tag
-                if (L[0].oy === 0) {
-                    xaxis.setAttribute('d', tmpD);
-                } else {
-                    xlines.childNodes[n].setAttribute('d', tmpD);
-                }
+                
+                // set the path for the line's object
+                xlineObjs[n].setAttribute('d', tmpD);
             
             }
 
@@ -514,32 +882,19 @@ new Date() < new Date('2023-10-13') &&
                     tmpD += 'L' + L[i].makeSVG();
                 }
                 
-                // add the path to the svg tag
-                if (L[0].ox === 0) {
-                    yaxis.setAttribute('d', tmpD);
-                } else {
-                    ylines.childNodes[n].setAttribute('d', tmpD);
-                }
-
+                ylineObjs[n].setAttribute('d', tmpD);
+                
             }
     
         }
         
-        function update(val = 0) {
+        function update() {
             
             // recalc the masses
-            masses.forEach(M => M.recalc(val * valScale));
+            masses.forEach(M => M.recalc(count * valScale));
     
             // recalc the grid points
-            for (let AP of allPts) {
-                
-                for (let p of AP) {
-                    
-                    p.recalc(val * valScale);
-                    
-                }
-                
-            }
+            for (let AP of allPts) { for (let p of AP) { p.recalc();}}
     
             // draw the x-lines
             drawXlines();
@@ -589,33 +944,89 @@ new Date() < new Date('2023-10-13') &&
     
         ////////////////////////////////////////////////////////////
     
-        // handlers {
+        // lizzers {
         
-        for (let [x, y, z] of [
-    
+        for (const [x, y, z] of [
+            
+            // increment on scroll {
             [svgHolder, 'wheel', e => {
             
+                // stop the browser from going back-button-ward
                 e.preventDefault();
             
+                // if the scroll was big enough ...
                 if (Math.abs(e.deltaX) > 5) {
+                    
+                    // copy the count
                     let c = count;
+                    
+                    // gate the copy between zero and a hundred
                     c = [0, c + 1 * Math.sign(e.deltaX), 100]
                         .sort((a, b) => a - b)[1];
-            
+                    
+                    // only if the count has actually changed ...
                     if (c !== count) {
+                        
+                        // increment the count
                         count = c;
+                        
+                        // if the count returns ad principio ...
+                        if (count === 0) {
+                            
+                            console.log( 'moving masses')
+                            
+                            // loop through all the masses ...
+                            for (let m of masses) {
+                                
+                                // move them to random coords
+                                m.x = -40 + Math.random() * 80;
+                                m.y = -15 + Math.random() * 30;
+                                
+                                m.ox = m.x;
+                                m.oy = m.y;
+                                
+                                m.moveTo(m.x, m.y);
+                                
+                            }
+                            
+                            // loop through all the points ...
+                            for (const L of allPts) {
+                                
+                                // reset them
+                                for (const P of L) {
+                                    P.x = P.ox;
+                                    P.y = P.oy;
+                                    P.mem = [];
+                                    
+                                    for (let i in masses) {
+                                      let dist = getDist(masses[i], P);
+                                    
+                                      P.acc[i] = dist === 0 ? 0 :
+                                                bigG / (dist * dist);
+                                    }
+                                    P.threshold = Infinity;
+                                }
+                            }
+                            
+                        }
+                        
+                        // and update the scene
                         update(count);
                     }
             
                 }
             
             }],
-    
+            // }
+            
+            // reset on double-click {
             [svgHolder, 'dblclick', e => {
                 e.preventDefault();
                 (count = 0);
                 update(count);
             }]
+            //}
+            
     
         ]) {
             x.addEventListener(y, z, {passive:false});
