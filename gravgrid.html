@@ -84,6 +84,7 @@ input[type=range] {
     width: 100%;
     border-radius: calc(var(--thumbH) / 2);
     background-color: hsla(0,100%,100%,0.3);
+    pointer-events: none;
 }
 
 input[type=range]::-webkit-slider-thumb {
@@ -96,6 +97,7 @@ input[type=range]::-webkit-slider-thumb {
     border: calc(0.1 * var(--thumbH)) solid;
     border-color: var(--backcolor);
     border-radius: calc(var(--thumbH) / 2);
+    pointer-events: auto;
 }
 
 input[type=range]:focus {
@@ -297,8 +299,19 @@ dd { margin-top: 15px; }
         </svg>
         
     </div>
+        
+    <div id="slideDiv" style="padding:10px 0px;margin:0;">
+        <input
+         id="slide0"
+         type="range"
+         min="0"
+         max="100"
+         step="1"
+         value="0"
+        />
+    </div>
     
-    <div id="arrows">
+    <div id="arrows" style="display:none;">
         <div id="leftArrow"  class="arrow"> &#9664; &#9664; &#9664; </div>
         <div id="rightArrow" class="arrow"> &#9654; &#9654; &#9654; </div>
     </div>
@@ -621,19 +634,7 @@ dd { margin-top: 15px; }
         <p id="sig" style="text-align:right;width:100%"><i>~queviva</i></p>
         
     </div>
-    
-    <!--div id="slideDiv" style="padding:10px 0px;margin:0;">
-        <input
-         id="slide0"
-         type="range"
-         min="0"
-         max="100"
-         step="1"
-         value="0"
-        />
-    </div-->
-    
-    
+  
 </div>
 </body>
 
@@ -699,6 +700,7 @@ new Date() < new Date('2023-10-13') &&
         const ylines = document.getElementById('ylines');
         const massgroup = document.getElementById('massgroup');
         
+        const slide0 = document.getElementById('slide0' );
         const leftArrow  = document.getElementById('leftArrow' );
         const rightArrow = document.getElementById('rightArrow');
     
@@ -1002,13 +1004,16 @@ new Date() < new Date('2023-10-13') &&
             // javascript is NOT an object oriented language
             // you have to make a this reference
             const nm = this;
+            
+            // have no direction initially
+            nm.dir = 0;
         
             // create loop thread var
-            let isLooping = false;
+            nm.isLooping = false;
         
             // the animation function
             nm.anim = dir => {
-        
+                
                 // if it still needs to run ...
                 if (
                     (count < 100 && count > 0)
@@ -1019,40 +1024,45 @@ new Date() < new Date('2023-10-13') &&
                 ) {
                     
                     // call the increment
-                    incCount(dir);
+                    incCount(nm.dir);
+                    
+                    // adjust the slider
+                    slide0.value = count;
         
                     // recall the loop
-                    isLooping = setTimeout(function() {
-                        nm.anim(dir);
-                    //}, ~~(Math.random() * 180 + 20));
+                    nm.isLooping = setTimeout(function() {
+                        nm.anim(nm.dir);
                     }, 0);
         
                 }
                 // otherwise stop the loop
                 else {
         
-                    clearTimeout(isLooping);
-                    isLooping = false;
+                    clearTimeout(nm.isLooping);
+                    nm.isLooping = false;
         
                 }
         
             }
         
             nm.start = dir => {
-        
-                clearTimeout(isLooping);
-                this.anim(dir);
+            
+                clearTimeout(nm.isLooping);
+                nm.dir = dir;
+                this.anim(nm.dir);
         
             };
         
             nm.stop = () => {
         
-                clearTimeout(isLooping);
-                isLooping = false;
+                clearTimeout(nm.isLooping);
+                console.log('stop called\nislooping:', nm.isLooping)
+                nm.isLooping = false;
         
             };
         
         }();
+        
         //}
     
         ////////////////////////////////////////////////////////////
@@ -1107,20 +1117,86 @@ new Date() < new Date('2023-10-13') &&
             
                 // stop the browser from going back-button-ward
                 e.preventDefault();
-            
+                
                 // if the scroll was big enough ...
                 if (Math.abs(e.deltaX) > 5) {
                     
+                    // if the animation is running ...
+                    if (noteMaker.isLooping !== false) {
+                        
+                        // stop the loop
+                        noteMaker.stop();
+                        
+                    }
+                    
                     // increment the count
                     incCount(Math.sign(e.deltaX));
+                    
+                    // adjust slider
+                    slide0.value = count;
             
                 }
             
             }],
             // }
             
+            // increment on slider {
+            [slide0, 'input', e => {
+                
+                // if animation is running ...
+                if (noteMaker.isLooping !== false) {
+                    
+                    // stop the loop
+                    noteMaker.stop();
+                    
+                }
+                
+                // increment by the value
+                count = parseInt(slide0.value, 10),
+                update();
+                
+            }],
+            //}
+            
+            // run animation on slider double click {
+            [slideDiv, 'dblclick', e => {
+                
+                // figure out of it's left or right of center
+                let dir = [-1,1][Math.round((e.clientX - slideDiv.offsetLeft - holder.offsetLeft) / slideDiv.offsetWidth)];
+                
+                console.log(dir);
+                
+                // if animation is running ...
+                if (
+                    noteMaker.isLooping !== false
+                    //&& // and in the same direction
+                    //noteMaker.dir === dir
+                ) {
+                    console.log(noteMaker.dir);
+                    
+                    // stop the loop
+                    noteMaker.stop()
+                    
+                } else { // otherwise ...
+                
+                    // start the animation
+                    noteMaker.start(dir);
+                    
+                }
+                
+            }],
+            //}
+            
             // increment on right arrow click {
             [rightArrow, 'click', e => {
+                
+                // if the animation is running ...
+                if (noteMaker.isLoop !== false) {
+                    
+                    // stop the loop
+                    noteMaker.stop();
+                    
+                }
                 
                 // increment the count
                 incCount(1);
@@ -1140,12 +1216,21 @@ new Date() < new Date('2023-10-13') &&
             // decrement on left arrow click {
             [leftArrow, 'click', e => {
                 
+                // if the animation is running
+                if (noteMaker.isLooping !== false) {
+                    
+                    // stop the loop
+                    noteMaker.stop();
+                    
+                }
+                
                 // decrement the count
                 incCount(-1);
                 
             }],
             
             //}
+            
             // animate on left arrow double click {
             [leftArrow, 'dblclick', e => {
                 
@@ -1159,6 +1244,7 @@ new Date() < new Date('2023-10-13') &&
             [svgHolder, 'dblclick', e => {
                 e.preventDefault();
                 count = 0;
+                slide0.value = 0;
                 randReset();
                 update();
             }],
