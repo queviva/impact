@@ -13,7 +13,6 @@
     --color: hsl(var(--hue),var(--sat),var(--lit));
     --backcolor: hsl(120, 100%, 13%);
     --litback: hsla(120,50%,25%);
-    --dotcolor: var(--color);
 }
 
 body {
@@ -50,7 +49,6 @@ body {
 
 div {
     position: relative;
-    padding: 10px;
 }
 
 img {
@@ -121,15 +119,34 @@ svg {
     width: 100%;
     padding-top: calc(40% - 7px);
     overflow: hidden;
+    user-select: none;
+    --line-width: 2;
+    --line-color: 'purple';
+    --axis-width: 1;
+    --axis-color: #e90;
+    --dot-color: var(--color);
+}
+
+.arrow {
+        float: left;
+        width: 50%;
+        font-size: 15px;
+        padding-top: 3px;
+        box-sizing: border-box;
+        text-align: center;
+        user-select: none;
 }
 
 #gravLox {
     position: absolute;
     right: 0px;
     bottom: 0px;
+    padding: 2px;
     opacity: 0.3;
     font-style: italic;
     font-size: 20px;
+    color: var(--axis-color);
+    user-select: none;
 }
 
 #svgGrid {
@@ -139,6 +156,7 @@ svg {
     overflow: visible;
     xxxtransform: perspective(400px) rotateX(75deg);
     z-index:-1;
+    user-select: none;
 }
 
 #svgMass {
@@ -147,14 +165,17 @@ svg {
     position: absolute;
     xxxtransform: perspective(400px) rotateX(-15deg);
     xxxoverflow hidden;
+    user-select: none;
 }
 
 .gridline {
-    stroke-width: 1;
-    stroke: var(--dotcolor);
+    stroke-width: var(--line-width);
+    stroke: var(--line-color);
     stroke-linecap: round;
     fill: none;
+    pointer-events: stroke;
     vector-effect: non-scaling-stroke;
+    xxxtransition: d linear 1s;
 }
 
 .xlineDots {
@@ -174,8 +195,8 @@ svg {
 
 .axisline{
     fill: none;
-    stroke: #e90;
-    stroke-width: 1;
+    stroke: var(--axis-color);
+    stroke-width: var(--axis-width);
     vector-effect: non-scaling-stroke;
 }
 
@@ -204,18 +225,12 @@ frac {
     text-align: center;
 }
 
-
 num { border-bottom: 1px solid; }
-
 num::before {content: "\00a0\00a0"; }
 num::after {content: "\00a0\00a0"; }
 
 sup { font-size: 0.6em; }
 
-par {
-    font-size: 1.3em;
-    vertical-align: middle;
-}
 com { font-size: 0.5em; }
 com::before{ content: "\00a0\00a0\00a0["; }
 com::after{ content: "]"; }
@@ -257,7 +272,7 @@ dd { margin-top: 15px; }
                 >
                     <circle cx="10" cy="10" r="0.4"
                      vector-effect="non-scaling-size"
-                     fill="var(--dotcolor)"
+                     fill="var(--dot-color)"
                      stroke="none"
                     ></circle>
                 </marker>
@@ -269,20 +284,25 @@ dd { margin-top: 15px; }
             <g id="xlines"></g>
             <path id="xaxis" class="axisline"></path>
             <path id="yaxis" class="axisline"></path>
-            
+        
         </svg>
         
         <svg id="svgMass"
          xmlns:xlink="http://www.w3.org/2000/svg"
          width="100%"
          viewbox="-50 -20 100 40"
+         preserveAspectRatio="none"
         >
             <g id="massgroup"></g>
-            
-
         </svg>
         
     </div>
+    
+    <div id="arrows">
+        <div id="leftArrow"  class="arrow"> &#9664; &#9664; &#9664; </div>
+        <div id="rightArrow" class="arrow"> &#9654; &#9654; &#9654; </div>
+    </div>
+    <br>
     
     <div id="discussion">
         
@@ -508,9 +528,10 @@ dd { margin-top: 15px; }
         <p>
             By saying
             <frac><num>m &middot; space</num>time</frac>
-            we mean that there is some stuff, mass, and it
-            occupies some dimension, space, and all of that
-            is evenly distributed over time - it all persists.
+            we mean that there is some stuff, <i>mass</i>,
+            and it occupies some dimension, <i>space</i>,
+            and all of that is evenly distributed over
+            <i>time</i> - it all persists.
         </p>
         
         <p>
@@ -518,8 +539,8 @@ dd { margin-top: 15px; }
             <frac><num>E &middot; time</num>space</frac>
             by which we mean that there is some amount
             of energy and some time, and all of that is
-            evenly distributed throughout space. Energy
-            and time are spread out into the space.
+            evenly distributed throughout space. Both
+            energy and time are spread out into the space.
         </p>
         
         <p>
@@ -531,14 +552,14 @@ dd { margin-top: 15px; }
         
         <p>
             Scrolling over the scene causes specific locations
-            to begin <i>consuming</i> the space around them.
+            to begin <i>consuming</i> the universe around them.
         </p>
         
         <p>
-            These locations devour the space around them
-            and convert that into an object; the objects
-            exist in the dimensions that were converted
-            from the space around them, and all of that
+            These locations devour the surrounding grid
+            and convert that into an object; an object
+            that occupies the dimensions that were converted
+            from the space around them, and which
             persists throughout the time which was also
             pulled through from the grid.
         </p>
@@ -554,10 +575,14 @@ dd { margin-top: 15px; }
                 <frac><num>m &middot; space</num>time</frac>
             </dd>
             <br>
-            Objects get formed, those objects occupy the
-            dimensions that got formed, and all of that
-            exists for the time that got pulled through
-            the equation.
+            Initially, nothing exists on the <i>mass</i>
+            side of the equation.
+            Objects get formed; those objects need some dimensions
+            to occupy.  The dimensions they occupy were the ones
+            sucked through from the space on the other side of the
+            equation. The objects and the dimensions need to persist
+            for some time; the time they exist during is the time
+            from the other side of the equation.
         </p>
         
         <p>
@@ -566,7 +591,7 @@ dd { margin-top: 15px; }
             the grid to warp.
             Eventually, the distortion forms a very strong
             and noticable connection between the
-            centers-of-mass of each object.
+            centers of each object.
         </p>
         
         <p>
@@ -596,7 +621,6 @@ dd { margin-top: 15px; }
         <p id="sig" style="text-align:right;width:100%"><i>~queviva</i></p>
         
     </div>
-    
     
     <!--div id="slideDiv" style="padding:10px 0px;margin:0;">
         <input
@@ -629,10 +653,18 @@ new Date() < new Date('2023-10-13') &&
         // prefs {
     
         const size = 2;
-        const lineWidth = 0.4;
-        const axisWidth = 0.5;
+        
+        const cssProps = {
+            'line-width' : 0.4,
+            'line-color' : 'hsl(48,100%,88%)',
+            'axis-width' : 0.5,
+            'axis-color' : '#e90'
+        };
+        
         const xdim = 140;
         const ydim = 80;
+        //const xdim = 60;
+        //const ydim = 30;
         const valScale = 0.8;
         
         const useDots = false;
@@ -660,25 +692,30 @@ new Date() < new Date('2023-10-13') &&
         let count = 0;
     
         const NS = 'http://www.w3.org/2000/svg';
+        const svgHolder = document.getElementById('svgHolder');
         const xaxis = document.getElementById('xaxis');
         const yaxis = document.getElementById('yaxis');
         const xlines = document.getElementById('xlines');
         const ylines = document.getElementById('ylines');
         const massgroup = document.getElementById('massgroup');
+        
+        const leftArrow  = document.getElementById('leftArrow' );
+        const rightArrow = document.getElementById('rightArrow');
     
         let allPts = (new Array(1 + (2 * ydim / size))).fill(0);
         let yPts = [];
         
         let xlineObjs = [];
         let ylineObjs = [];
-    
+        
         //}
     
         // methods and objects {
         
         const getDist = (A, B) => Math.sqrt( //{
             Math.pow(A.x - B.x, 2) +
-            Math.pow(A.y - B.y, 2)
+            Math.pow(A.y - B.y, 2) //+
+          //Math.pow(A.z - B.z, 2) the mythical third dimension
         ); //}
     
         function Point(x, y) {
@@ -702,6 +739,7 @@ new Date() < new Date('2023-10-13') &&
                 let dist = getDist(masses[i], this);
                 
                 this.acc[i] = dist === 0 ? 0 : bigG / (dist * dist);
+                //this.acc[i] = dist === 0 ? 0 : ((1/(20*i+1))*bigG) / (dist * dist);
                 
             }
     
@@ -804,9 +842,48 @@ new Date() < new Date('2023-10-13') &&
             ));
     
         };
-    
+
+        function randReset() {
+        
+            // loop through all the masses ...
+            for (let m of masses) {
+        
+                // move them to random coords
+                m.x = -40 + Math.random() * 80;
+                m.y = -15 + Math.random() * 30;
+        
+                m.ox = m.x;
+                m.oy = m.y;
+        
+                m.moveTo(m.x, m.y);
+        
+            }
+        
+            // loop through all the points ...
+            for (const L of allPts) {
+        
+                // reset them
+                for (const P of L) {
+                    
+                    P.x = P.ox;
+                    P.y = P.oy;
+                    P.mem = [];
+        
+                    for (let i in masses) {
+                        let dist = getDist(masses[i], P);
+                        P.acc[i] = dist === 0 ? 0 : bigG / (dist * dist);
+                    }
+                    
+                    P.threshold = Infinity;
+                    
+                }
+                
+            }
+        
+        }
+        
         function createXlines() {
-    
+            
             for (let L of allPts) {
                 
                 let tmpL = document.createElementNS(NS, 'path');
@@ -814,8 +891,6 @@ new Date() < new Date('2023-10-13') &&
                 tmpL.classList.add('gridline', 'xline');
                 
                 if (useDots) { tmpL.classList.add('xlineDots'); }
-                
-                tmpL.style.strokeWidth = lineWidth;
                 
                 xlines.append(tmpL);
                 
@@ -836,7 +911,7 @@ new Date() < new Date('2023-10-13') &&
     
                 tmpL.classList.add('gridline', 'yline');
                 
-                tmpL.style.strokeWidth = lineWidth;
+                //tmpL.style.strokeWidth = lineWidth;
     
                 ylines.appendChild(tmpL);
                 
@@ -903,10 +978,90 @@ new Date() < new Date('2023-10-13') &&
             drawYlines();
     
         }
-    
+        
+        function incCount(val) {
+            
+            // make a copy of the count
+            let c = count;
+            
+            // increment the count gated between zero and a hundred
+            count = [0, count + val, 100].sort((a, b) => a - b)[1];
+            
+            // if the count has actually changed ...
+            if (c !== count) {
+                
+                // redraw the scene
+                update();
+                
+            }
+        
+        }
+
+        const noteMaker = new function () {
+            
+            // javascript is NOT an object oriented language
+            // you have to make a this reference
+            const nm = this;
+        
+            // create loop thread var
+            let isLooping = false;
+        
+            // the animation function
+            nm.anim = dir => {
+        
+                // if it still needs to run ...
+                if (
+                    (count < 100 && count > 0)
+                    ||
+                    (count === 0 && dir === 1)
+                    ||
+                    (count === 100 && dir === -1)
+                ) {
+                    
+                    // call the increment
+                    incCount(dir);
+        
+                    // recall the loop
+                    isLooping = setTimeout(function() {
+                        nm.anim(dir);
+                    //}, ~~(Math.random() * 180 + 20));
+                    }, 0);
+        
+                }
+                // otherwise stop the loop
+                else {
+        
+                    clearTimeout(isLooping);
+                    isLooping = false;
+        
+                }
+        
+            }
+        
+            nm.start = dir => {
+        
+                clearTimeout(isLooping);
+                this.anim(dir);
+        
+            };
+        
+            nm.stop = () => {
+        
+                clearTimeout(isLooping);
+                isLooping = false;
+        
+            };
+        
+        }();
         //}
     
         ////////////////////////////////////////////////////////////
+        
+        // set the css vars {
+        for (const [keys, vals] of Object.entries(cssProps)) {
+            svgHolder.style.setProperty('--'+keys, vals);
+        }
+        // }
     
         // create the masses {
         for (let M in masses) { masses[M] = new Mass(...masses[M]); }
@@ -935,7 +1090,6 @@ new Date() < new Date('2023-10-13') &&
         // create the lines {
         createXlines();
         createYlines();
-        xaxis.style.strokeWidth = yaxis.style.strokeWidth = axisWidth;
         //}
     
         // draw the scene {
@@ -957,76 +1111,58 @@ new Date() < new Date('2023-10-13') &&
                 // if the scroll was big enough ...
                 if (Math.abs(e.deltaX) > 5) {
                     
-                    // copy the count
-                    let c = count;
-                    
-                    // gate the copy between zero and a hundred
-                    c = [0, c + 1 * Math.sign(e.deltaX), 100]
-                        .sort((a, b) => a - b)[1];
-                    
-                    // only if the count has actually changed ...
-                    if (c !== count) {
-                        
-                        // increment the count
-                        count = c;
-                        
-                        // if the count returns ad principio ...
-                        if (count === 0) {
-                            
-                            console.log( 'moving masses')
-                            
-                            // loop through all the masses ...
-                            for (let m of masses) {
-                                
-                                // move them to random coords
-                                m.x = -40 + Math.random() * 80;
-                                m.y = -15 + Math.random() * 30;
-                                
-                                m.ox = m.x;
-                                m.oy = m.y;
-                                
-                                m.moveTo(m.x, m.y);
-                                
-                            }
-                            
-                            // loop through all the points ...
-                            for (const L of allPts) {
-                                
-                                // reset them
-                                for (const P of L) {
-                                    P.x = P.ox;
-                                    P.y = P.oy;
-                                    P.mem = [];
-                                    
-                                    for (let i in masses) {
-                                      let dist = getDist(masses[i], P);
-                                    
-                                      P.acc[i] = dist === 0 ? 0 :
-                                                bigG / (dist * dist);
-                                    }
-                                    P.threshold = Infinity;
-                                }
-                            }
-                            
-                        }
-                        
-                        // and update the scene
-                        update(count);
-                    }
+                    // increment the count
+                    incCount(Math.sign(e.deltaX));
             
                 }
             
             }],
             // }
             
+            // increment on right arrow click {
+            [rightArrow, 'click', e => {
+                
+                // increment the count
+                incCount(1);
+                
+            }],
+            //}
+            
+            // animate on right arrow double click {
+            [rightArrow, 'dblclick', e => {
+                
+                // increment the count
+                noteMaker.start(1);
+                
+            }],
+            //}
+            
+            // decrement on left arrow click {
+            [leftArrow, 'click', e => {
+                
+                // decrement the count
+                incCount(-1);
+                
+            }],
+            
+            //}
+            // animate on left arrow double click {
+            [leftArrow, 'dblclick', e => {
+                
+                // decrement the count
+                noteMaker.start(-1);
+                
+            }],
+            //}
+            
             // reset on double-click {
             [svgHolder, 'dblclick', e => {
                 e.preventDefault();
-                (count = 0);
-                update(count);
-            }]
+                count = 0;
+                randReset();
+                update();
+            }],
             //}
-            
     
         ]) {
             x.addEventListener(y, z, {passive:false});
