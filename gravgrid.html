@@ -647,12 +647,12 @@ new Date() < new Date('2023-10-13') &&
         
         // prefs {
     
-        const size = 5;
+        const size = 2;
         const xdim = 70;
         const ydim = 40;
         
         const cssProps = {
-            'line-width' : 1.4,
+            'line-width' : 0.4,
             'line-color' : 'hsl(48,100%,88%)',
             'axis-width' : 0.5,
             'axis-color' : '#e90'
@@ -984,7 +984,7 @@ new Date() < new Date('2023-10-13') &&
         
         }
 
-        const noteMaker = new function () {
+        const aniMaker = new function () {
             
             // javascript is NOT an object oriented language
             // it can NOT 'bind this' no matter what they tell you
@@ -1065,17 +1065,17 @@ new Date() < new Date('2023-10-13') &&
         // fill the points array {
         for (let L in allPts) {
             
-            // zero fill twice the xdim plus one for axis
-            allPts[L] = (new Array(1 + (2 * xdim))).fill(0);
+            // zero-fill twice the xdim plus one for axis
+            allPts[L] = (new Array(1 + (2 * xdim))).fill(0)
             
             // remap the zeros to points at apropos coords
-            allPts[L] = allPts[L].map((p, i) =>
+            .map((p, i) =>
                 new Point((i - xdim) * size, (L - ydim) * size)
             );
             
         }
     
-        // rotate that matrix for y-lines
+        // then rotate that matrix for y-lines
         for (let L in allPts[0]) {
     
             yPts[L] = [];
@@ -1112,10 +1112,10 @@ new Date() < new Date('2023-10-13') &&
                 if (Math.abs(e.deltaX) > 5) {
                     
                     // if the animation is running ...
-                    if (noteMaker.isLooping !== false) {
+                    if (aniMaker.isLooping !== false) {
                         
                         // stop the loop
-                        noteMaker.stop();
+                        aniMaker.stop();
                         
                     }
                     
@@ -1134,10 +1134,10 @@ new Date() < new Date('2023-10-13') &&
             [slide0, 'input', e => {
                 
                 // if animation is running ...
-                if (noteMaker.isLooping !== false) {
+                if (aniMaker.isLooping !== false) {
                     
                     // stop the loop
-                    noteMaker.stop();
+                    aniMaker.stop();
                     
                 }
                 
@@ -1147,28 +1147,28 @@ new Date() < new Date('2023-10-13') &&
                 
             }],
             //}
-            
+
             // animate on slider double click {
             [slideDiv, 'dblclick', e => {
                 
-                // figure out of it's left or right of center
-                let dir = [-1,1][
-                    Math.round(
-                        (e.clientX - slideDiv.offsetLeft - holder.offsetLeft)
-                        / slideDiv.offsetWidth
-                    )
-                ];
-                
                 // if animation is running ...
-                if (noteMaker.isLooping !== false   ) {
+                if (aniMaker.isLooping !== false) {
                     
                     // stop the loop
-                    noteMaker.stop()
+                    aniMaker.stop()
                     
                 } else { // otherwise ...
                 
                     // start the animation
-                    noteMaker.start(dir);
+                    aniMaker.start(
+                        [1,-1][
+                        (100 *
+                        (e.clientX - slideDiv.offsetLeft - holder.offsetLeft)
+                        / slideDiv.offsetWidth
+                        > slide0.value) ?
+                        0 : 1
+                        ]
+                    );
                     
                 }
                 
