@@ -36,8 +36,7 @@ body {
 }
 
 #discussion {
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin: 0px;
     height: 200px;
     overflow: auto;
 }
@@ -300,7 +299,10 @@ dd { margin-top: 15px; }
         
     </div>
         
-    <div id="slideDiv" style="padding:10px 0px;margin:0;">
+    <div id="slideDiv" style="
+        padding: 10px 0px 5px 0px;
+        margin: 0;
+    ">
         <input
          id="slide0"
          type="range"
@@ -310,13 +312,7 @@ dd { margin-top: 15px; }
          value="0"
         />
     </div>
-    
-    <div id="arrows" style="display:none;">
-        <div id="leftArrow"  class="arrow"> &#9664; &#9664; &#9664; </div>
-        <div id="rightArrow" class="arrow"> &#9654; &#9654; &#9654; </div>
-    </div>
-    <br>
-    
+
     <div id="discussion">
         
         <p>
@@ -700,9 +696,8 @@ new Date() < new Date('2023-10-13') &&
         const ylines = document.getElementById('ylines');
         const massgroup = document.getElementById('massgroup');
         
+        const slideDiv = document.getElementById('slideDiv' );
         const slide0 = document.getElementById('slide0' );
-        const leftArrow  = document.getElementById('leftArrow' );
-        const rightArrow = document.getElementById('rightArrow');
     
         let allPts = (new Array(1 + (2 * ydim / size))).fill(0);
         let yPts = [];
@@ -1162,9 +1157,12 @@ new Date() < new Date('2023-10-13') &&
             [slideDiv, 'dblclick', e => {
                 
                 // figure out of it's left or right of center
-                let dir = [-1,1][Math.round((e.clientX - slideDiv.offsetLeft - holder.offsetLeft) / slideDiv.offsetWidth)];
-                
-                console.log(dir);
+                let dir = [-1,1][
+                    Math.round(
+                        (e.clientX - slideDiv.offsetLeft - holder.offsetLeft)
+                        / slideDiv.offsetWidth
+                    )
+                ];
                 
                 // if animation is running ...
                 if (
@@ -1172,7 +1170,6 @@ new Date() < new Date('2023-10-13') &&
                     //&& // and in the same direction
                     //noteMaker.dir === dir
                 ) {
-                    console.log(noteMaker.dir);
                     
                     // stop the loop
                     noteMaker.stop()
@@ -1186,60 +1183,7 @@ new Date() < new Date('2023-10-13') &&
                 
             }],
             //}
-            
-            // increment on right arrow click {
-            [rightArrow, 'click', e => {
-                
-                // if the animation is running ...
-                if (noteMaker.isLoop !== false) {
-                    
-                    // stop the loop
-                    noteMaker.stop();
-                    
-                }
-                
-                // increment the count
-                incCount(1);
-                
-            }],
-            //}
-            
-            // animate on right arrow double click {
-            [rightArrow, 'dblclick', e => {
-                
-                // increment the count
-                noteMaker.start(1);
-                
-            }],
-            //}
-            
-            // decrement on left arrow click {
-            [leftArrow, 'click', e => {
-                
-                // if the animation is running
-                if (noteMaker.isLooping !== false) {
-                    
-                    // stop the loop
-                    noteMaker.stop();
-                    
-                }
-                
-                // decrement the count
-                incCount(-1);
-                
-            }],
-            
-            //}
-            
-            // animate on left arrow double click {
-            [leftArrow, 'dblclick', e => {
-                
-                // decrement the count
-                noteMaker.start(-1);
-                
-            }],
-            //}
-            
+
             // reset on double-click {
             [svgHolder, 'dblclick', e => {
                 e.preventDefault();
