@@ -194,7 +194,7 @@ svg {
     
 }
 
-.axisline{
+.axisline {
     fill: none;
     stroke: var(--axis-color);
     stroke-width: var(--axis-width);
@@ -283,8 +283,6 @@ dd { margin-top: 15px; }
             
             <g id="ylines"></g>
             <g id="xlines"></g>
-            <path id="xaxis" class="axisline"></path>
-            <path id="yaxis" class="axisline"></path>
         
         </svg>
         
@@ -649,19 +647,17 @@ new Date() < new Date('2023-10-13') &&
         
         // prefs {
     
-        const size = 2;
+        const size = 5;
+        const xdim = 70;
+        const ydim = 40;
         
         const cssProps = {
-            'line-width' : 0.4,
+            'line-width' : 1.4,
             'line-color' : 'hsl(48,100%,88%)',
             'axis-width' : 0.5,
             'axis-color' : '#e90'
         };
         
-        const xdim = 140;
-        const ydim = 80;
-        //const xdim = 60;
-        //const ydim = 30;
         const valScale = 0.8;
         
         const useDots = false;
@@ -690,8 +686,6 @@ new Date() < new Date('2023-10-13') &&
     
         const NS = 'http://www.w3.org/2000/svg';
         const svgHolder = document.getElementById('svgHolder');
-        const xaxis = document.getElementById('xaxis');
-        const yaxis = document.getElementById('yaxis');
         const xlines = document.getElementById('xlines');
         const ylines = document.getElementById('ylines');
         const massgroup = document.getElementById('massgroup');
@@ -699,7 +693,7 @@ new Date() < new Date('2023-10-13') &&
         const slideDiv = document.getElementById('slideDiv' );
         const slide0 = document.getElementById('slide0' );
     
-        let allPts = (new Array(1 + (2 * ydim / size))).fill(0);
+        let allPts = (new Array(1 + (2 * ydim))).fill(0);
         let yPts = [];
         
         let xlineObjs = [];
@@ -895,8 +889,7 @@ new Date() < new Date('2023-10-13') &&
     
             }
             
-            xlineObjs[ydim/2].style.display = 'none';
-            xlineObjs[ydim/2] = xaxis;
+            xlineObjs[ydim].classList.add('axisline');
     
         }
     
@@ -908,16 +901,13 @@ new Date() < new Date('2023-10-13') &&
     
                 tmpL.classList.add('gridline', 'yline');
                 
-                //tmpL.style.strokeWidth = lineWidth;
-    
                 ylines.appendChild(tmpL);
                 
                 ylineObjs.push(tmpL);
     
             }
             
-            ylineObjs[xdim/2].style.display = 'none';
-            ylineObjs[xdim/2] = yaxis;
+            ylineObjs[xdim].classList.add('axisline');
     
         }
     
@@ -997,7 +987,8 @@ new Date() < new Date('2023-10-13') &&
         const noteMaker = new function () {
             
             // javascript is NOT an object oriented language
-            // you have to make a this reference
+            // it can NOT 'bind this' no matter what they tell you
+            // you have to make a _this_ reference
             const nm = this;
             
             // have no direction initially
@@ -1051,7 +1042,6 @@ new Date() < new Date('2023-10-13') &&
             nm.stop = () => {
         
                 clearTimeout(nm.isLooping);
-                console.log('stop called\nislooping:', nm.isLooping)
                 nm.isLooping = false;
         
             };
@@ -1074,10 +1064,15 @@ new Date() < new Date('2023-10-13') &&
     
         // fill the points array {
         for (let L in allPts) {
-            allPts[L] = (new Array(1 + (2 * xdim / size))).fill(0);
-            for (let P in allPts[L]) {
-                allPts[L][P] = new Point(-xdim + P * size, -ydim + L * size);
-            }
+            
+            // zero fill twice the xdim plus one for axis
+            allPts[L] = (new Array(1 + (2 * xdim))).fill(0);
+            
+            // remap the zeros to points at apropos coords
+            allPts[L] = allPts[L].map((p, i) =>
+                new Point((i - xdim) * size, (L - ydim) * size)
+            );
+            
         }
     
         // rotate that matrix for y-lines
@@ -1135,7 +1130,7 @@ new Date() < new Date('2023-10-13') &&
             }],
             // }
             
-            // increment on slider {
+            // increment on slide {
             [slide0, 'input', e => {
                 
                 // if animation is running ...
@@ -1153,7 +1148,7 @@ new Date() < new Date('2023-10-13') &&
             }],
             //}
             
-            // run animation on slider double click {
+            // animate on slider double click {
             [slideDiv, 'dblclick', e => {
                 
                 // figure out of it's left or right of center
@@ -1165,11 +1160,7 @@ new Date() < new Date('2023-10-13') &&
                 ];
                 
                 // if animation is running ...
-                if (
-                    noteMaker.isLooping !== false
-                    //&& // and in the same direction
-                    //noteMaker.dir === dir
-                ) {
+                if (noteMaker.isLooping !== false   ) {
                     
                     // stop the loop
                     noteMaker.stop()
@@ -1184,7 +1175,7 @@ new Date() < new Date('2023-10-13') &&
             }],
             //}
 
-            // reset on double-click {
+            // reset on scene double-click {
             [svgHolder, 'dblclick', e => {
                 e.preventDefault();
                 count = 0;
