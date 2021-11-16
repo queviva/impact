@@ -23,13 +23,17 @@ body {
 }
 
 #holder {
+    display: inline-grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
     padding: 10px;
     font-size: 24px;
     text-align: justify;
     max-width: 700px;
     width: 100%;
+    height: 100vh;
     margin: auto;
-    border: 1px solid #000;
+    xxxborder: 1px solid #000;
     background-color: var(--backcolor);
     color: var(--color);
     z-index: 2;
@@ -37,7 +41,6 @@ body {
 
 #discussion {
     margin: 0px;
-    height: 200px;
     overflow: auto;
 }
 
@@ -1236,7 +1239,6 @@ new Date() < new Date('2023-10-13') &&
         // draw the scene {
         update();
         //}
-
 
 // expire msg {
     
