@@ -283,7 +283,7 @@ dd { margin-top: 15px; }
             
             <g id="ylines"></g>
             <g id="xlines"></g>
-        
+            
         </svg>
         
         <svg id="svgMass"
@@ -346,8 +346,8 @@ dd { margin-top: 15px; }
         
         <p>
             That distance could be in any direction, in three dimensions;
-            it doesn't <i>have</i> to be in only one dimension;
-            normally you drive straight ahead, but you could go
+            it doesn't <i>have</i> to be in only one dimension.
+            Normally you drive straight ahead, but you could go
             left-and-right, forward-and-backwards, or even up-and-down
             if you're flying - so
             speed can be thought of as an amount of <i>space</i>
@@ -585,7 +585,7 @@ dd { margin-top: 15px; }
             Initially, nothing exists on the <i>mass</i>
             side of the equation.
             Objects get formed; those objects need some dimensions
-            to occupy.  The dimensions they occupy were the ones
+            to occupy.  The dimensions they occupy are the ones
             sucked through from the space on the other side of the
             equation. The objects and the dimensions need to persist
             for some time; the time they exist during is the time
@@ -689,9 +689,11 @@ new Date() < new Date('2023-10-13') &&
         const xlines = document.getElementById('xlines');
         const ylines = document.getElementById('ylines');
         const massgroup = document.getElementById('massgroup');
+        const svgGrid = document.getElementById('svgGrid');
         
         const slideDiv = document.getElementById('slideDiv' );
         const slide0 = document.getElementById('slide0' );
+        slide0.disabled = true;
     
         let allPts = (new Array(1 + (2 * ydim))).fill(0);
         let yPts = [];
@@ -950,6 +952,42 @@ new Date() < new Date('2023-10-13') &&
     
         }
         
+        function loader () {
+            
+            // if it still needs to load ...
+            if (count < 101) {
+            
+                // recalc all the points
+                for(let AP of allPts){for(let p of AP){p.recalc();}}
+                
+                // increment the count
+                count++;
+                
+                svgGrid.style.transform = 'scale(' + count /100 + ',1)';
+                
+                // call itself
+                setTimeout(loader,0);
+                
+            } else { // otherwise ...
+            
+                // reset the count to zero
+                count = 0;
+                
+                // load the listeners
+                for (const [x, y, z] of lizzers) {
+                    x.addEventListener(y, z, { passive: false });
+                }
+                
+                // enable the slider
+                slide0.disabled = false;
+                
+                svgGrid.style.transform = 'none';
+                
+            
+            }
+            
+        }
+        
         function update() {
             
             // recalc the masses
@@ -1049,58 +1087,9 @@ new Date() < new Date('2023-10-13') &&
         }();
         
         //}
-    
-        ////////////////////////////////////////////////////////////
         
-        // set the css vars {
-        for (const [keys, vals] of Object.entries(cssProps)) {
-            svgHolder.style.setProperty('--'+keys, vals);
-        }
-        // }
-    
-        // create the masses {
-        for (let M in masses) { masses[M] = new Mass(...masses[M]); }
-        //}
-    
-        // fill the points array {
-        for (let L in allPts) {
-            
-            // zero-fill twice the xdim plus one for axis
-            allPts[L] = (new Array(1 + (2 * xdim))).fill(0)
-            
-            // remap the zeros to points at apropos coords
-            .map((p, i) =>
-                new Point((i - xdim) * size, (L - ydim) * size)
-            );
-            
-        }
-    
-        // then rotate that matrix for y-lines
-        for (let L in allPts[0]) {
-    
-            yPts[L] = [];
-    
-            for (let i = 0, j = allPts.length; i < j; i++) {
-                yPts[L].push(allPts[i][L]);
-            }
-    
-        }
-        //}
-    
-        // create the lines {
-        createXlines();
-        createYlines();
-        //}
-    
-        // draw the scene {
-        update();
-        //}
-    
-        ////////////////////////////////////////////////////////////
-    
         // lizzers {
-        
-        for (const [x, y, z] of [
+        const lizzers = [
             
             // increment on scroll {
             [svgHolder, 'wheel', e => {
@@ -1133,6 +1122,8 @@ new Date() < new Date('2023-10-13') &&
             // increment on slide {
             [slide0, 'input', e => {
                 
+                e.stopPropagation();
+                
                 // if animation is running ...
                 if (aniMaker.isLooping !== false) {
                     
@@ -1148,8 +1139,8 @@ new Date() < new Date('2023-10-13') &&
             }],
             //}
 
-            // animate on slider double click {
-            [slideDiv, 'dblclick', e => {
+            // animate on slider div double click {
+            [slideDiv, 'click', e => {
                 
                 // if animation is running ...
                 if (aniMaker.isLooping !== false) {
@@ -1175,20 +1166,77 @@ new Date() < new Date('2023-10-13') &&
             }],
             //}
 
+            // swallow clicks directly on thumb {
+            [slide0, 'click', e => {
+                e.stopPropagation();
+                e.cancelBubble = true;
+            }],
+            //}
+            
             // reset on scene double-click {
             [svgHolder, 'dblclick', e => {
                 e.preventDefault();
                 count = 0;
                 slide0.value = 0;
-                randReset();
+                //randReset();
                 update();
             }],
             //}
     
-        ]) {
-            x.addEventListener(y, z, {passive:false});
+        ];
+        //}
+    
+        ////////////////////////////////////////////////////////////
+        // init:
+        
+        // set the css vars {
+        for (const [keys, vals] of Object.entries(cssProps)) {
+            svgHolder.style.setProperty('--'+keys, vals);
+        }
+        // }
+    
+        // create the masses {
+        for (let M in masses) { masses[M] = new Mass(...masses[M]); }
+        //}
+    
+        // fill the points array {
+        for (let L in allPts) {
+            
+            // zero-fill twice the x-dimension plus one for axis
+            allPts[L] = (new Array(1 + (2 * xdim))).fill(0)
+            
+            // remap the zeros to points at apropos coords
+            .map((p, i) =>
+                new Point((i - xdim) * size, (L - ydim) * size)
+            );
+            
+        }
+    
+        // then rotate that matrix for y-lines
+        for (let L in allPts[0]) {
+    
+            yPts[L] = [];
+    
+            for (let i in allPts) {
+                yPts[L].push(allPts[i][L]);
+            }
+    
         }
         //}
+    
+        // create the lines {
+        createXlines();
+        createYlines();
+        //}
+    
+        // calculate all the steps {
+        setTimeout(loader,0);
+        //}
+
+        // draw the scene {
+        update();
+        //}
+
 
 // expire msg {
     
