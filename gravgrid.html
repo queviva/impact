@@ -42,6 +42,7 @@ body {
 #discussion {
     margin: 0px;
     overflow: auto;
+    min-height: 40px;
 }
 
 .addendum {
@@ -1142,27 +1143,38 @@ new Date() < new Date('2023-10-13') &&
             }],
             //}
 
-            // animate on slider div double click {
+            // animate on slider div click {
             [slideDiv, 'click', e => {
                 
-                // if animation is running ...
+                // get the direction from the click
+                let dir = [1,-1][
+                    (100 *
+                    (e.clientX - slideDiv.offsetLeft - holder.offsetLeft)
+                    / slideDiv.offsetWidth
+                    > slide0.value) ?
+                    0 : 1
+                ];
+                
+                // if the animation is already running ...
                 if (aniMaker.isLooping !== false) {
                     
-                    // stop the loop
-                    aniMaker.stop()
+                    // and running in the OPPOSITE direction ...
+                    if (dir !== aniMaker.dir) {
+                        
+                        // change the direction
+                        aniMaker.dir = dir;
+                        
+                    } else { // otherwise it is running in the same dir ...
                     
-                } else { // otherwise ...
+                        // so, stop the loop
+                        aniMaker.stop()
+                        
+                    }
+                    
+                } else { // if the animation is not running ...
                 
                     // start the animation
-                    aniMaker.start(
-                        [1,-1][
-                        (100 *
-                        (e.clientX - slideDiv.offsetLeft - holder.offsetLeft)
-                        / slideDiv.offsetWidth
-                        > slide0.value) ?
-                        0 : 1
-                        ]
-                    );
+                    aniMaker.start(dir);
                     
                 }
                 
