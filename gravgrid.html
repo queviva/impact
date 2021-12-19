@@ -20,6 +20,7 @@ body {
     margin: 0px;
     background-color: #000;
     hyphens: auto;
+    text-align: center;
 }
 
 #holder {
@@ -107,6 +108,31 @@ input[type=range]:focus {
     outline: none;
 }
 
+/*possibly a portrait mobi-fone*/
+@media screen and (max-width:500px) {
+    
+    input {
+        --thumbH: 30px;
+    }
+    
+    dd {
+        font-size: 16px;
+        margin-left: 20px;
+    }
+    
+}
+  
+/*possibly a mobile landscaper*/
+@media screen and (orientation: landscape) and (max-width: 760px) {
+    
+    #holder {
+        height: 500px;
+        width: 100%;
+        max-width: none;
+    }
+      
+}
+
 </style>
 <style id="svgStyles">
 
@@ -130,6 +156,9 @@ svg {
     --axis-width: 1;
     --axis-color: #e90;
     --dot-color: var(--color);
+    --mass-color: #e90;
+    --mass-stroke: #c70;
+    --mass-line-color: purple;
 }
 
 .arrow {
@@ -207,14 +236,31 @@ svg {
 
 .mass {
     xxopacity: 1.5;
-    fill: #e90;
-    stroke : #c70;
+    fill: var(--mass-color);
+    stroke : var(--mass-stroke);
     xxxstroke: hsla(
         var(--hue),calc(0.8 * var(--sat)),calc(0.4 * var(--lit)),0.8
     );
     stroke-width: 5;
     vector-effect: non-scaling-stroke;
     xxxtransition: r 0.3s cubic-bezier(0.3, 1.2, 0.6, 1.6);
+}
+
+.massline {
+    
+    fill: none;
+    stroke: var(--mass-line-color);
+    stroke-width: 0.1;
+    
+}
+
+/*possibly a portrait mobi-fone*/
+@media screen and (max-width:500px) {
+    
+    #svgHolder {
+        border-width: 2px;
+    }
+      
 }
 
 </style>
@@ -318,7 +364,7 @@ dd { margin-top: 15px; }
     <div id="discussion">
         
         <p>
-            In this scene, <i>E</i> = m<i>c</i><sup>2</sup>&nbsp;
+            In this scene, <i>E</i>&nbsp;=&nbsp;m<i>c</i><sup>2</sup>&nbsp;
         
             and you ought to recognize that the letter&nbsp;<i>c</i>
             in that equation
@@ -327,8 +373,8 @@ dd { margin-top: 15px; }
         </p>
         
         <p>
-            Now, you also know that the little number two:
-            <sup>2</sup> &nbsp;means <i>squared</i>,
+            Now, you also know that the little number
+            two:&nbsp;<sup>2</sup> means <i>squared</i>,
             which is the same as saying "times itself"
         </p>
         
@@ -341,7 +387,8 @@ dd { margin-top: 15px; }
         
         <p>
             Normally when you think of speed, you think of it in terms
-            of some fraction - that is, "some distance per time" like
+            of some <i>fraction</i> - that is,
+            "some distance per time" as in:
             "miles per hour" or "meters per second" or "furlongs per
             fortnight" - whatever you want, <i>speed</i> is typically
             expressed as some quantity of distance being covered in
@@ -440,23 +487,7 @@ dd { margin-top: 15px; }
                 &middot; <frac><num>space</num>time</frac>
             </dd>
         </p>
-        
-        <p>
-            Since we don't care about the exact values,
-            these two things aren't <i>technically</i>
-            equal; so
-            what we mean is that they are <i>proportional</i>
-            conceptually.
-            We can phrase that like this:
-            <dd>
-                <i>E</i>
-                &middot; <frac><num>time</num>space</frac>
-                &prop;
-                m
-                &middot; <frac><num>space</num>time</frac>
-            </dd>
-        </p>
-        
+
         <p>
             This is the relationship between energy <i>E</i>
             and mass <i>m</i>
@@ -564,6 +595,8 @@ dd { margin-top: 15px; }
         <p>
             Scrolling over the scene causes specific locations
             to begin <i>consuming</i> the universe around them.
+            [Scroll left-to-right over the scene, or drag the
+            slider - click in the slider bar to animate.]
         </p>
         
         <p>
@@ -580,15 +613,18 @@ dd { margin-top: 15px; }
             things start moving from one side of the
             equation to the other.
             <dd>
-                <frac><num>E &middot; time</num>space</frac>
+                <i>E</i> &middot; <frac><num>time</num>space</frac>
+                &nbsp;
                 &rrarr;
                 &#x21f6;
-                <frac><num>m &middot; space</num>time</frac>
+                &nbsp;
+                m &middot; <frac><num>space</num>time</frac>
             </dd>
             <br>
             Initially, nothing exists on the <i>mass</i>
             side of the equation.
-            Objects get formed; those objects need some dimensions
+            When you start scrolling,
+            objects get formed; those objects need some dimensions
             to occupy.  The dimensions they occupy are the ones
             sucked through from the space on the other side of the
             equation. The objects and the dimensions need to persist
@@ -659,7 +695,10 @@ new Date() < new Date('2023-10-13') &&
             'line-width' : 0.4,
             'line-color' : 'hsl(48,100%,88%)',
             'axis-width' : 0.5,
-            'axis-color' : '#e90'
+            'axis-color' : '#e90',
+            'mass-color' : '#e90',
+            'mass-stroke' : '#c70',
+            'mass-line-color' : 'purple'
         };
         
         const valScale = 0.8;
@@ -719,6 +758,7 @@ new Date() < new Date('2023-10-13') &&
     
             this.ox = x;
             this.oy = y;
+            this.oTheta = [];
             this.x = x;
             this.y = y;
             this.rendX = x;
@@ -737,6 +777,11 @@ new Date() < new Date('2023-10-13') &&
                 
                 this.acc[i] = dist === 0 ? 0 : bigG / (dist * dist);
                 //this.acc[i] = dist === 0 ? 0 : ((1/(20*i+1))*bigG) / (dist * dist);
+                
+                this.oTheta[i] = Math.atan2(
+                    this.oy - masses[i].y,
+                    this.ox - masses[i].x
+                );
                 
             }
     
@@ -787,6 +832,9 @@ new Date() < new Date('2023-10-13') &&
                     this.threshold = dT;
                     this.rendX = masses[i].x;
                     this.rendY = masses[i].y;
+                    
+                    //masses[i].addNegPoint(this.oTheta[i], count);
+                    
                     break;
                     
                 }
@@ -808,6 +856,7 @@ new Date() < new Date('2023-10-13') &&
             this.x = x;
             this.y = y;
             this.r = r;
+            this.d = (new Array(100)).fill('');
     
             this.off = off;
             this.set = r / (100 - off);
@@ -818,11 +867,15 @@ new Date() < new Date('2023-10-13') &&
             this.obj.setAttribute('r', r);
             this.obj.classList.add('mass');
             
+            this.line = document.createElementNS(NS, 'path');
+            this.line.classList.add('massline');
+            
             if (aniMass) {
                 this.obj.innerHTML = '<animate attributeName="stroke-width" begin="0s" dur="0.5s" repeatCount="indefinite" from="0" to="8"/>';
             }
     
             massgroup.appendChild(this.obj);
+            massgroup.appendChild(this.line);
     
         }
     
@@ -831,12 +884,32 @@ new Date() < new Date('2023-10-13') &&
             this.obj.setAttribute('cy', y);
         };
         
+        Mass.prototype.addNegPoint = function (theta, i) {
+            
+            return;
+            
+            let r = i / valScale < this.off ?
+                0 : this.set * (i / valScale - this.off);
+                
+            this.d[i] += 'M'+ this.ox +' '+ this.oy +' ';
+            this.d[i] += 'l'+ r * Math.cos(theta) +
+                         ' '+ r * Math.sin(theta) +' ';
+            
+        };
+        
         Mass.prototype.recalc = function(val) {
             
             this.obj.setAttribute('r', (
                 this.r = val / valScale < this.off ?
                 0 : this.set * (val / valScale - this.off)
             ));
+            
+            /*
+            this.line.setAttribute(
+                'd',
+                this.d.slice(0,count).join('')
+            );
+            */
     
         };
 
@@ -967,7 +1040,10 @@ new Date() < new Date('2023-10-13') &&
                 // increment the count
                 count++;
                 
-                svgGrid.style.transform = 'scale(' + count /100 + ',1)';
+                svgGrid.setAttribute(
+                    'transform',
+                    'scale(' + count /100 + ', 1)'
+                );
                 
                 // call itself
                 setTimeout(loader,0);
@@ -987,7 +1063,14 @@ new Date() < new Date('2023-10-13') &&
                 
                 svgGrid.style.transform = 'none';
                 
+            }
             
+        }
+        
+        function removeLizzers () {
+            
+            for (const [x, y, z] of lizzers) {
+                x.removeEventListener(y, z, { passive: false });
             }
             
         }
@@ -1193,8 +1276,10 @@ new Date() < new Date('2023-10-13') &&
                 e.preventDefault();
                 count = 0;
                 slide0.value = 0;
-                //randReset();
                 update();
+                //removeLizzers();
+                //randReset();
+                //loader();
             }],
             //}
     
