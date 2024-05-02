@@ -1,0 +1,490 @@
+<!doctype html><html lang="en">
+<head><title>naming of names</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+<script defer src="nanopicker.js"></script>
+<style id="demoStyles">
+
+:root {
+    --back-color: #666;
+    --holder-back: #111;
+    --thumbH : 30px;
+}
+
+* {
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: var(--back-color);
+    font-size: 22px;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-align: center;
+}
+
+#holder {
+    
+    --nose-hsla: '85 100 94 1';
+    --nose-h: 95;
+    --nose-s: 100%;
+    --nose-l: 94%;
+    --nose-a: 1;
+    
+    --lightness: hsl(
+        var(--nose-h),
+        var(--nose-s),
+        calc(70% + 0.3 * var(--nose-l))
+    );
+    
+    --midness: hsl(
+        var(--nose-h),
+        calc(0.7 * var(--nose-s)),
+        calc(0.8 * var(--nose-l))
+    );
+    
+    --darkness: hsl(
+        var(--nose-h),
+        var(--nose-s),
+        calc(0.7 * var(--nose-l))
+    );
+    
+    --blackness: hsl(
+        var(--nose-h),
+        var(--nose-s),
+        calc(0.20 * var(--nose-l))
+    );
+                
+    --main-color: var(--lightness);
+    --greyed-out: var(--darkness);
+    
+    display: inline-grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    
+    position: relative;
+    color: var(--main-color);
+    background-color: var(--holder-back);
+    margin: auto;
+    margin-bottom: none;
+    width: 100%;
+    max-width: 700px;
+    padding: 10px;
+    font-size: 24px;
+    text-align: justify;
+}
+
+a, a:hover, a:visited {
+    text-decoration: none;
+    color: var(--darkness);
+}
+
+.qa > div > a, .qa > div > a:hover, .qa > div > a:visited,
+.qb > div > a, .qb > div > a:hover, .qb > div > a:visited
+{
+    color: var(--lightness);
+}
+
+pre {
+    background-color: var(--back-color);
+    margin: 0px;
+    padding: 10px;
+    color: var(--blackness);
+    overflow: auto;
+}
+
+hr {
+    border-top: 1px solid var(--blackness);
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    margin: 7px 0px 7px 0px;
+}
+
+b {
+    color: var(--darkness);
+}
+
+li {
+    color: var(--midness);
+}
+
+li > b {
+    color: var(--darkness);
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    margin: 0;
+    height: var(--thumbH);
+    width: 100%;
+    border-radius: calc(var(--thumbH) / 2);
+    background-color: var(--darkness);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: var(--lightness);
+    opacity: 1.7;
+    height: var(--thumbH);
+    margin-bottom: 0px;
+    width: var(--thumbH);
+    border: 3px solid var(--blackness);
+    border-radius: calc(var(--thumbH) / 2);
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+.qr {
+    padding: 10px;
+}
+
+.qa, .qb {
+    color: var(--midness);
+}
+
+.qa:after, .qb:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.qa > div, .qb > div {
+    float: left;
+    padding: 10px;
+    height: auto;
+}
+
+.qa > div:nth-child(1),
+.qb > div:nth-child(2) {
+  width: 65%;
+}
+
+.qa > div:nth-child(2),
+.qb > div:nth-child(1) {
+  width: 35%;
+}
+
+.qa > div > b,
+.qb > div > b {
+    color: var(--lightness);
+}
+
+.mobr {
+    display: none;
+}
+
+.hobr {
+    display: inline-block;
+}
+
+.abhr {
+    display: none;
+}
+
+.emp {
+    -webkit-text-stroke: 1px var(--blackness);
+}
+
+.small {
+    font-size: 0.8em;
+}
+
+img {
+    width: 100%;
+    background-color: var(--blackness);
+    padding-bottom:4px;
+}
+
+/*possibly a portrait mobi-fone*/
+@media screen and (max-width:500px) {
+
+    .qa > div:nth-child(1),
+    .qa > div:nth-child(2),
+    .qb > div:nth-child(1),
+    .qb > div:nth-child(2)
+    {
+        width: 100%;
+    }
+    
+    .mobr {
+        display: inline-block;
+    }
+    .hobr {
+        display: none;
+    }
+    .abhr {
+        display: block;
+    }
+    ul {
+        text-align: left;
+    }
+    
+}
+
+.signature {
+    text-align: right;
+    font-style: italic;
+    height: 130px;
+    -webkit-text-stroke: 1px var(--midness);
+    user-select:none;
+}
+
+</style>
+</head>
+<body>
+<div id="holder">
+    
+    <div
+        data-nose="#holder"
+        class="qr"
+        style="
+            text-align:center;
+            color:var(--blackness);
+        "
+    >
+        <i>The Naming of Names</i>
+    </div>
+    
+    <div class="qr">
+About a hundred buildings make up all of the
+locations in which
+UCLA holds classes.
+Some are named after a location or address,
+and some are simply called by a subject
+taught or researched there,
+but sixty two of them - just over two thirds -
+have the name of some person.
+
+    </div>
+    <div class="qr"><img src="outOf93.png"></div>
+    
+    <div class="qr">
+While a few buildings take their names from
+athletes or politicians,
+most buildings honor faculty or administrators,
+and ofcourse, wealthy donors.
+    </div>
+    <div class="qr"><img src="reason.png"></div>
+    
+    <div class="qr">
+Over the last several decades, ethnic latinquos
+have made up about twenty percent of alumni,
+while ethnic orientals made up about a third.
+    </div>
+    
+    <div class="qr">
+Of the buildings named after people,
+zero have ethnic latinquo names and only
+one boasts an ethnically oriental name.
+Two buildings had their names changed to honor
+negroes, but neither resulted from a donation.
+    </div>
+    
+    <div class="qr">
+One of them was named after a wealthy
+Armenian donor, but you will never guess
+which minority holds the majority
+of building names.
+    </div>
+    
+    <div class="qr">
+        <img src="buildingRace.png">
+    </div>
+    
+    <div class="qr">
+        <p>
+What about <i>just donors</i>, though?
+Of the buildings just named after people
+who donated so much money that entire buildings,
+schools, institutes, and centers carry their names,
+how do those break down?
+        </p>
+        <p>
+Of the people who give their own money to
+construct buildings that get named after
+other people - like administrators and athletes -
+how does that break down?
+        </p>
+    </div>
+    <div class="qr"><img src="justDonors.png"></div>
+    
+    <br><hr>
+    
+    <div class="qr">
+        APPENDIX
+    </div>
+    
+    <div class="qr"
+        style="
+            color:var(--darkness);
+            font-size: 0.5em;
+        "
+    >
+        <p>
+Three engineering buildings
+[ENGINEERING IV, V, & VI]
+are subject-named but actually house the
+<i>Samueli</i> school and were funded
+by that donation. They are considered here
+as only <i>one</i> building, with the donor's name.
+The two <i>Young</i> buildings are named
+after different people, one of whom is
+named <i>Gould</i>.
+Some buildings had double entries for different
+parts or wings of the building which were
+removed.
+'Field' and 'No Facility' were also removed.
+These were given by the registar as
+the names of all the locations
+in which a class could take place:
+        <br>
+        <li style="list-style-type:circle;"><i>
+https://registrar.ucla.edu/faculty-staff/classrooms-and-scheduling/building-list</i>
+        </li>
+        </p>
+        <table id="tabula"
+            style="
+                width: 100%;
+                border-color: var(--darkness);
+                border-collapse: collapse;
+            "
+            border="1"
+        ></table>
+        
+<script>
+const tabula = document.getElementById('tabula');
+`BUILDING,TYPE,REASON,RACISM
+700 Westwood Plaza,location,-,-
+Marion Anderson Hall,name,donor,goy
+Ackerman Student Union,name,athlete,jew
+Biomedical Sciences Bldg,subject,-,-
+Brain Mapping Center,subject,-,-
+Boelter (Kraus) Hall,name,faculty/admin,maybe
+Botany Building,subject,-,-
+Boyer Hall,name,faculty/admin,mormon
+Bradley Hall,name,politician,black
+Brain Research Institute,subject,-,-
+Broad Art Center,name,donor,jew
+Bunche Hall,name,athlete/politician,baptized
+Campbell Hall,name,faculty/admin,goy
+Carnesale Commons,name,faculty/admin,bronx
+William Andrews Clark Library,name,donor,goy
+California NanoSystems Institute,subject,-,-
+Collins Center ,name,donor,goy?
+Cornell Hall,name,donor,hamburger
+Covel Commons,name,faculty/admin,goy
+Canyon Point,location,-,-
+De Neve Plaza ,location,-,-
+School of Dentistry,subject,-,-
+Dodd Hall,name,faculty/admin,maybe
+Dykstra Hall,name,faculty/admin,goy
+Engineering (Samueli) IV V VI,subject,donor,jew
+Entrepreneurs Hall,subject,-,-
+Factor Bldg,name,donor,jew
+Fernald Center,name,faculty/admin,jersey
+Field,location,-,-
+Fowler Museum,name,donor,maybe
+Franz Hall,name,faculty/admin,maybe
+Geffen Hall,name,donor,jew
+Geology Building,subject,-,-
+Gold Hall,name,donor,jew
+Wendy and Leonard Goldberg ,name,donor,jew
+Gonda (Goldschmied),name,donor,jew
+Graduate School of Education ,subject,-,-
+Haines Hall,name,athlete/politician,goy
+Hedrick Hall,name,faculty/admin,goy
+Hershey Hall,name,donor,goy?
+Center for the Health Sciences,subject,-,-
+Kaplan Hall,name,donor,jew
+Kaufman Hall,name,donor,jew
+Kerckhoff Hall,name,donor,german?
+Kinsey Pavilion,name,faculty/admin,goy
+Knudsen Hall,name,faculty/admin,mormon
+Korn Convocation Hall,name,donor,jew
+Lab School 1,subject,-,-
+La Kretz Hall,name,donor,jew
+Law Building,subject,-,-
+Life Sciences,subject,-,-
+Lu Valle Commons,name,athlete,black
+MacDonald Lab,name,donor,irish
+Macgowan Hall,name,faculty/admin,irish
+Vatche and Tamar Manoukian Bld,name,donor,armenian
+Marion Davies Children's Center,name,donor,brooklyn
+Melnitz Hall,name,faculty/admin,jew
+Molecular Sciences Building,subject,-,-
+Moore Hall,name,faculty/admin,goy
+Morton Medical Building,name,donor,jew
+Mathematical Sciences,subject,-,-
+Murphy Hall ,name,faculty/admin,irish
+Neuroscience Research Building,subject,-,-
+Northwest Campus Auditorium,location,-,-
+Olympic Hall,location,-,-
+Orthopedic Hospital,subject,-,-
+Ostin Music Center,name,donor,jew
+Physics and Astronomy Building,subject,-,-
+Perloff Hall,name,faculty/admin,jew
+Portola Plaza Building,location,-,-
+Powell Library,name,faculty/admin,quaker
+Pritzker Hall ,name,donor,jew
+Public Affairs Building,subject,-,-
+School of Public Health,subject,-,-
+Ueberroth Building,name,donor,goy?
+Reed Center,name,donor,goy
+Rieber Hall,name,faculty/admin,maybe
+Rosenfeld Library,name,donor,jew
+Rolfe Hall,name,faculty/admin,goy
+Royce Hall,name,faculty/admin,goy
+Student Activities Center,subject,-,-
+Sculpture Garden,location,-,-
+Semel Institute,name,donor,jew
+Slichter Hall,name,faculty/admin,jew
+Schoenberg Music Building,name,faculty/admin,jew
+Sproul Hall,name,faculty/admin,goy
+Terasaki Life Sciences Building,name,donor,oriental
+UCLA Lab School,subject,-,-
+Wasserman Building,name,donor,jew
+James West Alumni Center,name,donor,goy
+Young (Gould) Hall,name,donor,jew
+Wooden Rec Denter,name,athlete,goy
+Young Library,name,faculty/admin,goy`
+.split('\n').forEach(val => {
+    let tr = tabula.insertRow();
+    val.split(',').forEach((e, i) => {
+        //let td = tr.insertCell(i);
+        //td.innerHTML = e;
+        tr.insertCell(i).innerHTML = e;
+    })
+})
+</script>
+
+       <p>
+       racist breakdown of population:<br>
+       <li style="list-style-type:circle;">
+       <i>
+       https://www.ucla.edu/about/facts-and-figures
+       </i>
+       </li>
+       </p>
+
+    </div>
+    
+    
+    <br><hr>
+    <div class="qr signature" data-nose="#holder">
+    ~queviva
+    </div>
+    
+</div>
+
+</body>
+<script>
+</script>
+</html>
