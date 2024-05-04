@@ -164,6 +164,19 @@ nut-area:nth-of-type(even) > span {
 
 <body>
     
+<svg id="patternSVG" style="height:0;width:0;">
+  <defs>
+    <pattern id="dots" width="2" height="2"
+     patternTransform="rotate(45) scale(0.3)"
+     patternUnits="userSpaceOnUse"
+    >
+      <circle r="0.5" cx="1" cy="1"
+        fill="var(--dots-col, hsl(40,100%,95%))"
+      />
+    </pattern>
+  </defs>
+</svg>
+
 <div class="qr">
 About a hundred buildings make up all of the
 place in which UCLA holds classes.
@@ -230,7 +243,7 @@ exessive-cologne donor.
     [1.6,"hsl(40,100%,70%)","Cologne"],
     [1.6,"hsl(40,100%,80%)","Chop Stix"],
     [1.6,"hsl(40,100%,90%)","Oatmeal"],
-    [9.4,"hsl(40,100%,95%)","all<br>other"]
+    [9.4,"url(#dots)","all<br>other"]
  ]'
  data-nutz-opts='{
     "init" : -28
@@ -253,7 +266,7 @@ schools, institutes, and centers carry their names
     [3.2,"hsl(40,100%,60%)","Pastrami"],
     [3.2,"hsl(40,100%,70%)","Cologne"],
     [3.2,"hsl(40,100%,80%)","Chop-Stix"],
-    [9.7,"hsl(40,100%,95%)","All<br>Other"],
+    [9.7,"url(#dots)","All<br>Other"],
     [9.7,"hsl(20,40%,60%)","Soy?"]
  ]'
  data-nutz-opts='{
@@ -300,7 +313,7 @@ https://www.ucla.edu/about/facts-and-figures
 </div>
 <hr>
 </div>
-<div id="queviva" data-wizz class="qr" style="text-align:right;user-select:none;">
+<div class="qr" style="text-align:right;user-select:none;">
     <img src="abeKazoo.png" onclick="
         pendix.style.display =
         pendix.style.display === 'none' ?
@@ -351,6 +364,7 @@ document.addEventListener('DOMContentLoaded',e=>{
             });
                 
             }
+            
         });
         
         SVG.childNodes.forEach(arc => {
@@ -363,16 +377,14 @@ document.addEventListener('DOMContentLoaded',e=>{
         SVG.addEventListener('click', e => {
             if (e.ctrlKey) {
                 SVG.style.transform = 'rotate(' +
-                    (SVG.nutTurn += 27) + 'deg)';
+                    (SVG.nutTurn +=
+                    (e.shiftKey ? 1 : -1) * 27)
+                +'deg)';
             }
-        })
+        });
         
     });
-    
-    document.querySelectorAll('.nutarea')
-    .forEach(nut => {
-        log(nut);
-    });
+
 });
 </script>
 <script id="table-builder">
