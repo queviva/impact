@@ -1,336 +1,275 @@
 <!doctype html><html lang="en">
-<head><title>naming of names</title>
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<head><title>do not</title>
+<script defer src="nutz.js"></script>
 <script defer src="nanopicker.js"></script>
-<style id="demoStyles">
+<style id="docStyles">
 
-:root {
-    --back-color: #666;
-    --holder-back: #111;
-    --thumbH : 30px;
+@font-face {
+    font-family : luckiest;
+    src : url(luckiest.ttf);
 }
 
 * {
     box-sizing: border-box;
-    word-wrap: break-word;
 }
 
 body {
-    padding: 0;
-    margin: 0;
-    background-color: var(--back-color);
-    font-size: 22px;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-    text-align: center;
-}
-
-#holder {
-    
-    --nose-hsla: '85 100 94 1';
-    --nose-h: 95;
+    --nose-hsla: '20 100 30 1';
+    --nose-h: 20;
     --nose-s: 100%;
-    --nose-l: 94%;
+    --nose-l: 30%;
     --nose-a: 1;
     
-    --lightness: hsl(
+    --main-col: hsl(
         var(--nose-h),
         var(--nose-s),
-        calc(70% + 0.3 * var(--nose-l))
+        var(--nose-l)
     );
     
-    --midness: hsl(
-        var(--nose-h),
-        calc(0.7 * var(--nose-s)),
-        calc(0.8 * var(--nose-l))
-    );
-    
-    --darkness: hsl(
-        var(--nose-h),
+    --second-col: hsl(
+        calc(180 + var(--nose-h)),
         var(--nose-s),
-        calc(0.7 * var(--nose-l))
+        var(--nose-l)
     );
-    
-    --blackness: hsl(
-        var(--nose-h),
+     
+    --third-col: hsl(
+        calc(270 + var(--nose-h)),
         var(--nose-s),
-        calc(0.20 * var(--nose-l))
+        var(--nose-l)
     );
-                
-    --main-color: var(--lightness);
-    --greyed-out: var(--darkness);
     
-    display: inline-grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    
-    position: relative;
-    color: var(--main-color);
-    background-color: var(--holder-back);
-    margin: auto;
-    margin-bottom: none;
-    width: 100%;
-    max-width: 700px;
-    padding: 10px;
-    font-size: 24px;
-    text-align: justify;
-}
-
-a, a:hover, a:visited {
-    text-decoration: none;
-    color: var(--darkness);
-}
-
-.qa > div > a, .qa > div > a:hover, .qa > div > a:visited,
-.qb > div > a, .qb > div > a:hover, .qb > div > a:visited
-{
-    color: var(--lightness);
-}
-
-pre {
-    background-color: var(--back-color);
-    margin: 0px;
-    padding: 10px;
-    color: var(--blackness);
-    overflow: auto;
-}
-
-hr {
-    border-top: 1px solid var(--blackness);
-    border-bottom: none;
-    border-left: none;
-    border-right: none;
-    margin: 7px 0px 7px 0px;
-}
-
-b {
-    color: var(--darkness);
-}
-
-li {
-    color: var(--midness);
-}
-
-li > b {
-    color: var(--darkness);
-}
-
-input[type=range] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    display: inline-block;
-    margin: 0;
-    height: var(--thumbH);
-    width: 100%;
-    border-radius: calc(var(--thumbH) / 2);
-    background-color: var(--darkness);
-}
-
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    background-color: var(--lightness);
-    opacity: 1.7;
-    height: var(--thumbH);
-    margin-bottom: 0px;
-    width: var(--thumbH);
-    border: 3px solid var(--blackness);
-    border-radius: calc(var(--thumbH) / 2);
-}
-
-input[type=range]:focus {
-    outline: none;
+    background-color: #888;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }
 
 .qr {
-    padding: 10px;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    font-size: 14px;
+    font-family: georgia;
+    text-align: justify;
+    color: #eee;
 }
 
-.qa, .qb {
-    color: var(--midness);
+hr {
+    width: 400px;
+    border-top: 1px solid #fff;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    margin: auto;
 }
 
-.qa:after, .qb:after {
-    content: "";
-    display: table;
-    clear: both;
+table {
+    margin:auto;
+    border-color: var(--darkness);
+    border-collapse: collapse;
+    font-size: 12px;
+    width: 400px;
 }
 
-.qa > div, .qb > div {
-    float: left;
-    padding: 10px;
-    height: auto;
+</style>
+<style id="nutAreaStyles">
+
+nut-area {
+    position: relative;
+    display: block;
+    margin: auto;
+    width: 400px;
+    height: 240px;
+    margin: auto;
+    padding: 20px;
 }
 
-.qa > div:nth-child(1),
-.qb > div:nth-child(2) {
-  width: 65%;
+nut-area > svg[data-nutz] {
+    position: absolute;
+    overflow: visible;
+    top: 20px;
+    right: 20px;
+    height: 200px;
+    width: 200px;
+    transition: transform linear 200ms;
+    user-select: none;
 }
 
-.qa > div:nth-child(2),
-.qb > div:nth-child(1) {
-  width: 35%;
+nut-area > svg[data-nutz] > path {
+    stroke-width: 3;
+    stroke: #fff;
+    vector-effect: non-scaling-stroke;
+    transform: scale(1);
+    transition: transform linear 200ms, fill linear 200ms;
 }
 
-.qa > div > b,
-.qb > div > b {
-    color: var(--lightness);
+nut-area > svg[data-nutz] > path:hover {
+    transform: scale(1.1);
 }
 
-.mobr {
-    display: none;
+nut-area:nth-of-type(odd) > svg[data-nutz] {
+    right: 0px;
 }
 
-.hobr {
-    display: inline-block;
+nut-area:nth-of-type(even) > svg[data-nutz] {
+    left: 10px;
 }
 
-.abhr {
-    display: none;
+nut-area > .cap {
+    font-family: luckiest;
+    position: absolute;
+    top: 10px;
+    color: #fff;
+    font-size: 30px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all linear 400ms;
+    max-width: 150px;
 }
 
-.emp {
-    -webkit-text-stroke: 1px var(--blackness);
+nut-area:nth-of-type(odd) > .cap {
+    left: 10px;
 }
 
-.small {
-    font-size: 0.8em;
+nut-area:nth-of-type(even) > .cap {
+    right: 10px;
 }
 
-img {
-    width: 100%;
-    background-color: var(--blackness);
-    padding-bottom:4px;
+nut-area > span {
+    position: absolute;
+    bottom: 3px;
+    color: #eee;
+    font-style:italic;
+    font-size: 0.85em;
+    transition: opacity linear 200ms;
+    opacity: 0;
 }
 
-/*possibly a portrait mobi-fone*/
-@media screen and (max-width:500px) {
-
-    .qa > div:nth-child(1),
-    .qa > div:nth-child(2),
-    .qb > div:nth-child(1),
-    .qb > div:nth-child(2)
-    {
-        width: 100%;
-    }
-    
-    .mobr {
-        display: inline-block;
-    }
-    .hobr {
-        display: none;
-    }
-    .abhr {
-        display: block;
-    }
-    ul {
-        text-align: left;
-    }
-    
+nut-area:hover span {
+    opacity: 1;
 }
 
-.signature {
-    text-align: right;
-    font-style: italic;
-    height: 130px;
-    -webkit-text-stroke: 1px var(--midness);
-    user-select:none;
+nut-area:nth-of-type(odd) > span {
+    left: 10px;
+}
+
+nut-area:nth-of-type(even) > span {
+    right: 10px;
 }
 
 </style>
 </head>
+
 <body>
-<div id="holder">
     
-    <div
-        data-nose="#holder"
-        class="qr"
-        style="
-            text-align:center;
-            color:var(--blackness);
-        "
-    >
-        <i>The Naming of Names</i>
-    </div>
-    
-    <div class="qr">
+<div class="qr">
 About a hundred buildings make up all of the
-locations in which
-UCLA holds classes.
+place in which UCLA holds classes.
 Some are named after a location or address,
 and some are simply called by a subject
-taught or researched there,
-but sixty two of them - just over two thirds -
+taught or researched there.
+But sixty two of them - just over two thirds -
 have the name of some person.
+</div>
+<nut-area><span>buildings named after...</span>
+<svg id="nut0" data-nutz='[
+    [67.4,"hsl(100,100%,25%)","Person"],
+    [25,"hsl(20,100%,30%)","Subject"],
+    [7.6,"hsl(40,100%,50%)","Location"]
+ ]'
+ data-nutz-opts='{
+    "init" : -25
+ }'
+/>
+</nut-area>
 
-    </div>
-    <div class="qr"><img src="outOf93.png"></div>
-    
-    <div class="qr">
-While a few buildings take their names from
+<div class="qr">
+While a few take their names from
 athletes or politicians,
-most buildings honor faculty or administrators,
+most of the named-buildings honor
+faculty or administrators,
 and ofcourse, wealthy donors.
-    </div>
-    <div class="qr"><img src="reason.png"></div>
-    
-    <div class="qr">
-Over the last several decades, ethnic latinquos
+</div>
+<nut-area><span>...why this person</span>
+<svg data-nutz='[
+    [50.8,"hsl(100,100%,25%)","Donor"],
+    [39.7,"hsl(20,100%,30%)","Faculty<br>&Admin"],
+    [4.8,"hsl(40,100%,50%)","Athlete"],
+    [3.2,"hsl(40,100%,70%)","Athlete/<br>Politician"],
+    [1.6,"hsl(40,100%,90%)","Politician"]
+ ]'
+ data-nutz-opts='{
+    "init" : -25
+ }'
+/>
+</nut-area>
+
+<div class="qr">
+Over the last several decades, taquitos
 have made up about twenty percent of alumni,
-while ethnic orientals made up about a third.
-    </div>
-    
-    <div class="qr">
+while chop&#8209;stix made up about a third.
 Of the buildings named after people,
-zero have ethnic latinquo names and only
-one boasts an ethnically oriental name.
-Two buildings had their names changed to honor
-negroes, but neither resulted from a donation.
-    </div>
-    
-    <div class="qr">
-One of them was named after a wealthy
-Armenian donor, but you will never guess
-which minority holds the majority
-of building names.
-    </div>
-    
-    <div class="qr">
-        <img src="buildingRace.png">
-    </div>
-    
-    <div class="qr">
-        <p>
+zero have street-vendor names and only
+one knows kung&#8209;fu.
+<br><br>
+Two building names honor watermelandres,
+and one of them was named after an
+exessive-cologne donor.
+</div>
+<nut-area><span>soup du jour...</span>
+<svg data-nutz='[
+    [4.8,"hsl(20,40%,60%)","Vegan?"],
+    [25.4,"hsl(20,100%,30%)","Soy Latte"],
+    [36.5,"hsl(100,100%,25%)","Pizza"],
+    [7.9,"hsl(100,20%,60%)","Maybe?"],
+    [3.2,"hsl(40,100%,20%)","Chicken|Waffle<br></svg>House|Mc Rib"],
+    [3.2,"hsl(40,100%,50%)","Fry Sauce"],
+    [4.8,"hsl(40,100%,60%)","Pastrami"],
+    [1.6,"hsl(40,100%,70%)","Cologne"],
+    [1.6,"hsl(40,100%,80%)","Chop Stix"],
+    [1.6,"hsl(40,100%,90%)","Oatmeal"],
+    [9.4,"hsl(40,100%,95%)","all<br>other"]
+ ]'
+ data-nutz-opts='{
+    "init" : -28
+ }'
+/>
+</nut-area>
+
+<div class="qr">
 What about <i>just donors</i>, though?
-Of the buildings just named after people
+Only the buildings named after people
 who donated so much money that entire buildings,
-schools, institutes, and centers carry their names,
-how do those break down?
-        </p>
-        <p>
-Of the people who give their own money to
-construct buildings that get named after
-other people - like administrators and athletes -
-how does that break down?
-        </p>
-    </div>
-    <div class="qr"><img src="justDonors.png"></div>
-    
-    <br><hr>
-    
-    <div class="qr">
-        APPENDIX
-    </div>
-    
-    <div class="qr"
-        style="
-            color:var(--darkness);
-            font-size: 0.5em;
-        "
-    >
-        <p>
-Three engineering buildings
-[ENGINEERING IV, V, & VI]
+schools, institutes, and centers carry their names
+- how do those break down?
+</div>
+<nut-area><span>...of just donors</span>
+<svg id="nutspin" data-nutz='[
+    [9.7,"hsl(20,100%,30%)","Latte|Vegan|PB&J"],
+    [58.1,"hsl(100,100%,25%)","Bagel|Pizza|Pizza<br>Oven|Matzo<br>Ball|Gefilta"],
+    [3.2,"hsl(100,20%,60%)","Maybe?"],
+    [3.2,"hsl(40,100%,60%)","Pastrami"],
+    [3.2,"hsl(40,100%,70%)","Cologne"],
+    [3.2,"hsl(40,100%,80%)","Chop-Stix"],
+    [9.7,"hsl(40,100%,95%)","All<br>Other"],
+    [9.7,"hsl(20,40%,60%)","Soy?"]
+ ]'
+ data-nutz-opts='{
+    "init" : -25
+ }'
+/>
+</nut-area>
+<br>
+
+<hr>
+<div id="pendix" style="display:none">
+<style>#pendix > div, table { color: #333 };</style>
+<div class="qr">
+APPENDIXIS:
+            <p>
+Three buildings [ENGINEERING IV, V, & VI]
 are subject-named but actually house the
 <i>Samueli</i> school and were funded
 by that donation. They are considered here
@@ -339,27 +278,104 @@ The two <i>Young</i> buildings are named
 after different people, one of whom is
 named <i>Gould</i>.
 Some buildings had double entries for different
-parts or wings of the building which were
+parts or wings of the same building; those were
 removed.
 'Field' and 'No Facility' were also removed.
-These were given by the registar as
+These were given by the registrar as
 the names of all the locations
 in which a class could take place:
-        <br>
-        <li style="list-style-type:circle;"><i>
+<li style="list-style-type:circle;font-size:0.7em"><i>
 https://registrar.ucla.edu/faculty-staff/classrooms-and-scheduling/building-list</i>
         </li>
-        </p>
-        <table id="tabula"
-            style="
-                width: 100%;
-                border-color: var(--darkness);
-                border-collapse: collapse;
-            "
-            border="1"
-        ></table>
+
+</div>
+<table id="tabula" border="1"></table>
+<div class="qr" style="color:#333;">
+racist breakdown of population:<br>
+<li style="list-style-type:circle;font-size:0.7em">
+<i>
+https://www.ucla.edu/about/facts-and-figures
+</i>
+</li>
+</div>
+<hr>
+</div>
+<div id="queviva" data-wizz class="qr" style="text-align:right;user-select:none;">
+    <img src="../abeKazoo.png" onclick="
+        pendix.style.display =
+        pendix.style.display === 'none' ?
+        'block' : 'none';
+    ">
+</div>
+
+</body>
+<script id="donut-config">
+
+const log = console.log;
+
+document.addEventListener('DOMContentLoaded',e=>{
+    
+    document.querySelectorAll('svg[data-nutz]').forEach(SVG => {
         
-<script>
+        JSON.parse(SVG.dataset.nutz).forEach((arc, i) => {
+    
+            let cap = document.createElement('div');
+            cap.classList.add('cap');
+            cap.innerHTML = arc[2] + '<br>' + arc[0] + '%';
+            SVG.parentElement.append(cap);
+            
+            let p = SVG.children[i];
+            p.addEventListener('mouseover', e => {
+                cap.style.opacity = 1;
+                cap.style.transform = 'scale(1)'
+            });
+            p.addEventListener('mouseout', e => {
+                cap.style.opacity = 0;
+                cap.style.transform = 'scale(0.8)'
+            });
+            
+            if (arc[2].match(/\|/)) {
+                
+            let slurs = arc[2].split('|');
+            let len = slurs.length - 1;
+            
+            p.addEventListener('mouseover', e => {
+                slurs = [
+                    ...slurs.splice(
+                        1+~~(Math.random()*len), 1
+                    ),
+                    ...slurs
+                ];
+                cap.innerHTML = slurs[0] +
+                '<br>' + arc[0] + '%';
+            });
+                
+            }
+        });
+        
+        SVG.childNodes.forEach(arc => {
+            arc.addEventListener('mouseover', e => {
+                SVG.append(arc);
+            });
+        });
+        
+        SVG.nutTurn = 0;
+        SVG.addEventListener('click', e => {
+            if (e.ctrlKey) {
+                SVG.style.transform = 'rotate(' +
+                    (SVG.nutTurn += 27) + 'deg)';
+            }
+        })
+        
+    });
+    
+    document.querySelectorAll('.nutarea')
+    .forEach(nut => {
+        log(nut);
+    });
+});
+</script>
+<script id="table-builder">
 const tabula = document.getElementById('tabula');
 `BUILDING,TYPE,REASON,RACISM
 700 Westwood Plaza,location,-,-
@@ -463,28 +479,5 @@ Young Library,name,faculty/admin,goy`
         tr.insertCell(i).innerHTML = e;
     })
 })
-</script>
-
-       <p>
-       racist breakdown of population:<br>
-       <li style="list-style-type:circle;">
-       <i>
-       https://www.ucla.edu/about/facts-and-figures
-       </i>
-       </li>
-       </p>
-
-    </div>
-    
-    
-    <br><hr>
-    <div class="qr signature" data-nose="#holder">
-    ~queviva
-    </div>
-    
-</div>
-
-</body>
-<script>
 </script>
 </html>
